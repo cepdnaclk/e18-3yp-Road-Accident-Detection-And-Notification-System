@@ -618,7 +618,7 @@ section {
 --------------------------------------------------------------*/
 .about h3 {
   font-weight: 700;
-  font-size: 28px;
+  font-size: 30px;
   margin-bottom: 20px;
   font-family: var(--font-secondary);
 }
@@ -1553,8 +1553,27 @@ section {
   opacity: 1;
 }
 
+/*--------------------------------------------------------------
+# Bill of material
+--------------------------------------------------------------*/
+@media (min-width: 1200px){
+.bom table{
+  margin: auto;
+  width: 70% !important;
+}
+}
 
-
+.bom thead{
+  font-size: 20px;
+  font-weight: 700;
+  background-color: var(--color-primary);
+}
+.bom tbody{
+  font-size: 17px;
+}
+.bom th{
+  width: 10%;
+}
 
 /*--------------------------------------------------------------
 # Pricing Section
@@ -2005,11 +2024,11 @@ section {
   position: relative;
   background: var(--color-primary);
   padding: 60px 0 0 0;
-  height: 550px;
+  /* height: 550px; */
 
-  /* background-size:cover;
+  background-size:cover;
   overflow: hidden;
-  height:700px; */
+  
 }
 
 @media (min-width: 1365px) {
@@ -2021,6 +2040,13 @@ section {
 .hero h2 {
   font-size: 48px;
   font-weight: 700;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.hero h3 {
+  font-size: 25px;
+  font-weight: 600;
   margin-bottom: 20px;
   color: #fff;
 }
@@ -2072,7 +2098,7 @@ section {
 
 @media (max-width: 640px) {
   .hero h2 {
-    font-size: 36px;
+    font-size: 28px;
   }
 
   .hero .btn-get-started,
@@ -2114,7 +2140,7 @@ section {
 .hero .icon-box .title {
   font-weight: 700;
   margin-bottom: 15px;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .hero .icon-box .title a {
