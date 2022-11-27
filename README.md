@@ -1,4 +1,4 @@
-# Road Accident Ditection And Notification System
+# Road Accident Detection And Notification System
 ___
 
 A motor car accident can happen to anyone of us at any given moment. If you’re lucky then you’ll survive without a scratch. But sometimes you may be too shocked to act rationally or you may be unconscious with serious damages. Unfortunately in such situations, it takes an unacceptably long time for an ambulance to attend to you.
