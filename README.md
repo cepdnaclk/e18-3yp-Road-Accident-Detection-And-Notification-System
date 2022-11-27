@@ -1,57 +1,17 @@
 ___
-# DELETE THIS INSTRUCTIONS AND ADD AN INTRODUCTION ABOUT YOUR PROJECT
+# Road Accident Ditection And Notification System
 ___
 
-# eYY-3yp-project-template
+# Problem Overview
 
-This is a sample repository you can use for your Embedded Systems project. Once you followed these instructions, remove the text and add a brief introduction to here.
+A motor car accident can happen to anyone of us at any given moment. If you’re lucky then you’ll survive without a scratch. But sometimes you may be too shocked to act rationally or you may be unconscious with serious damages. Unfortunately in such situations, it takes an unacceptably long time for an ambulance to attend to you.
 
-### Enable GitHub Pages
+This is the main reason why most people pass away. Those critical minutes/seconds just after an accident can save countless lives if the first responders arrive soon enough and the police is notified quickly enough to get rid of other haphazards. And that is the problem that we are trying to solve through our project.
 
-You can put the things to be shown in GitHub pages into the _docs/_ folder. Both html and md file formats are supported. You need to go to settings and enable GitHub pages and select _main_ branch and _docs_ folder from the dropdowns, as shown in the below image.
+# Our Solution
 
-![image](https://user-images.githubusercontent.com/11540782/98789936-028d3600-2429-11eb-84be-aaba665fdc75.png)
+First we use our hardware to detect a potential accident. This is done through an accelerometer which measures acceleration in 3 perpendicular directions. We optimize the accelerometer to pick up sudden unusually high accelerations and classifies them as potential crash. An automatic alarm would go off in the car to indicate the potential accident. Thirty seconds after the detection of the potential accident , the closest relatives of the driver will be informed. Simultaneously the closest ambulances will also be informed. Both parties will also receive the gps location of the accident.
 
-### Special Configurations
+The police on the other hand, will be shown a full map indicating all the potential accidents.
 
-These projects will be automatically added into [https://projects.ce.pdn.ac.lk](). If you like to show more details about your project on this site, you can fill the parameters in the file, _/docs/index.json_
-
-```
-{
-  "title": "This is the title of the project",
-  "team": [
-    {
-      "name": "Team Member Name 1",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 2",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 3",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    }
-  ],
-  "supervisors": [
-    {
-      "name": "Dr. Supervisor 1",
-      "email": "email@eng.pdn.ac.lk"
-    },
-    {
-      "name": "Supervisor 2",
-      "email": "email@eng.pdn.ac.lk"
-    }
-  ],
-  "tags": ["Web", "Embedded Systems"]
-}
-```
-
-Once you filled this _index.json_ file, please verify the syntax is correct. (You can use [this](https://jsonlint.com/) tool).
-
-### Page Theme
-
-A custom theme integrated with this GitHub Page, which is based on [github.com/cepdnaclk/eYY-project-theme](https://github.com/cepdnaclk/eYY-project-theme). If you like to remove this default theme, you can remove the file, _docs/\_config.yml_ and use HTML based website.
+Our system is equipped to deal with false alarms too. For example,if the system erroneously detects a pothole or a road bump as an accident. Then the alarm would go off instantaneously but the user will be given a physical button on the device to turn off the alarm. If the user turns the alarm off within the first 30 seconds then no notifications will be sent to the respective parties. Even if the user takes more than 30 seconds to turn off a false alarm, the sent notifications to the respective parties will be retracted and they’ll be notified that it was a false alarm.
