@@ -1567,7 +1567,7 @@ section {
 @media (min-width: 1200px){
 .bom table{
   margin: auto;
-  width: 70% !important;
+  width: 80% !important;
 }
 }
 
@@ -1582,6 +1582,37 @@ section {
 .bom th{
   width: 10%;
 }
+
+@media (min-width: 1200px){
+  .test-plan table{
+    margin: auto;
+    width: 100% !important;
+  }
+  }
+  
+  .test-plan thead{
+    font-size: 20px;
+    font-weight: 700;
+    background-color: var(--color-primary);
+  }
+  .test-plan tbody{
+    font-size: 17px;
+  }
+  .test-plan th{
+    width: 10%;
+    font-size: 22px;
+  }
+
+  .test-plan tbody tr :first-child{
+    background-color: #3e4369;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 25px;
+    /* min-height: 45px;
+    height: 45px; */
+  }
+
+  
 
 /*--------------------------------------------------------------
 # Pricing Section
@@ -2840,4 +2871,10 @@ section {
 
 .footer .credits a {
   color: #fff;
+}
+
+.image{
+  display: block;
+  max-width: 80%;
+  height: auto;
 }
