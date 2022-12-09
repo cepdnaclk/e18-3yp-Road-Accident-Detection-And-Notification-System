@@ -1,0 +1,30 @@
+//asyncronize operation for reading name and other information from multiple clients
+const { readFile, writeFile } = require('fs')
+
+console.log('start')
+readFile('filepath for first file', 'utf8', (err, result) => {
+  if (err) {
+    console.log(err)
+    return
+  }
+  const first = result
+  readFile('file path for second file', 'utf8', (err, result) => {
+    if (err) {
+      console.log(err)
+      return
+    }
+    const second = result
+    writeFile(
+      'file path for third file ',
+      `Here is the result : ${first}, ${second}`,
+      (err, result) => {
+        if (err) {
+          console.log(err)
+          return
+        }
+        console.log('done with this task')
+      }
+    )
+  })
+})
+console.log('starting next task')
