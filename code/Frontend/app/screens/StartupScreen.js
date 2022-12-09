@@ -1,8 +1,13 @@
 import React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet } from 'react-native';
 
-const StartupScreen = () => {
+const StartupScreen = ({navigation}) => {
+    setTimeout(() => {
+        navigation.replace('Welcome')
+    }, 2500)
+
     return (
         <LinearGradient 
             style={styles.container}
@@ -11,6 +16,7 @@ const StartupScreen = () => {
             end={{x: 1, y: 1}}>
 
             <Image source={require('../assets/img/Logo.png')} />
+            <StatusBar style='light'/>
 
         </LinearGradient>
     );

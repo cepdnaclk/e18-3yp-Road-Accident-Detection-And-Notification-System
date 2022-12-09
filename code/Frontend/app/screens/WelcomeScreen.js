@@ -1,4 +1,5 @@
 import React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 
@@ -18,7 +19,7 @@ const StartupScreen = () => {
                 <Pressable><Text>Sign Up</Text></Pressable>
                 {/* <Pressable>Login</Pressable> */}
             </View>
-            
+            <StatusBar style='light'/>
 
         </LinearGradient>
     );
