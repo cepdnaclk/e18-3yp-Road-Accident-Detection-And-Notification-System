@@ -2878,3 +2878,11 @@ section {
   max-width: 80%;
   height: auto;
 }
+
+.image-slider{
+  background-color: #7e8091;
+  width: 100%;
+  height: auto;
+  padding: 30px 15px 30px 15px;
+  justify-content: center;
+}
