@@ -1,42 +1,46 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, Image } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-function CustomButton(props) {
+import { icons } from '../assets/icons/icons'
+
+function CustomInput(props) {
     return (
-        <TouchableOpacity 
-            onPress={() => props.onPress?.()}
+        <View
             style={{
                 height: 42, 
                 width: props.width, 
                 marginTop: 20 }}>
                 
-            <LinearGradient
-                style={styles.container}
-                colors={[ props.primary, props.secondary ]}
-                start={{x: 0.5, y: 0}}
-                end={{x: 0.5, y: 1}}>
+            <View style={styles.container}>
+                <MaterialCommunityIcons style={styles.icon} name={props.iconName} size={20} color="#B5B5B5" />
                 
                 <Text style={{
-                    color: props.color, 
+                    color: '#B5B5B5', 
                     fontFamily: props.font, 
                     fontSize: 15,
                     letterSpacing: 0.8}}> 
 
                     {props.title}
                 </Text>
-            </LinearGradient>
-        </TouchableOpacity>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        backgroundColor: '#8F8F8F',
         borderRadius: 50,
+    },
+    icon: {
+        marginLeft: 15,
+        marginRight: 6,
     }
 })
 
-export default CustomButton;
+export default CustomInput;

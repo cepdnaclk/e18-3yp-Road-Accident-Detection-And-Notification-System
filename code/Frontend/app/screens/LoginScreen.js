@@ -1,10 +1,12 @@
 import React from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity } from 'react-native';
-import AppLoading from 'expo-app-loading';
+// import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 
 import CustomButton from '../components/CustomButton';
+import CustomInput from '../components/CustomInput';
 
 const LoginScreen = ({navigation}) => {
     const [fontsLoaded] = useFonts({
@@ -12,7 +14,7 @@ const LoginScreen = ({navigation}) => {
     });
 
     if (!fontsLoaded) {
-        return <AppLoading />;
+        return null;
     }
 
     return (
@@ -23,12 +25,14 @@ const LoginScreen = ({navigation}) => {
                         onPress={() => navigation.navigate('Welcome')}
                         style={styles.back}>
 
-                        <Image source={require('../assets/icons/back.png')} />
+                        <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
+                        {/* <Ionicons name="md-arrow-back-outline" size={30} color="#B5B5B5" /> */}
                     </TouchableOpacity>
                     <Image source={require('../assets/img/LogoLogin.png')} />
                 </View>
-
+                
                 <View style={styles.bottom}>
+                    <CustomInput width='90%' font='Poppins' iconName='account-outline' title='username' />
                     <CustomButton width='90%' font='Poppins' primary='#5037A9' secondary='#48319D' color='#FFFFFF' title='Login' />
                 </View>
                 <ExpoStatusBar style='light'/>
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
     },
     back: {
         position: 'absolute',
-        top: StatusBar.currentHeight + 15,
+        top: StatusBar.currentHeight + 10,
         right: 20,
     },
 })
