@@ -32,8 +32,32 @@ const LoginScreen = ({navigation}) => {
                 </View>
                 
                 <View style={styles.bottom}>
-                    <CustomInput width='90%' font='Poppins' iconName='account-outline' title='username' />
-                    <CustomButton width='90%' font='Poppins' primary='#5037A9' secondary='#48319D' color='#FFFFFF' title='Login' />
+                    <CustomInput 
+                        width='90%' 
+                        font='Poppins' 
+                        iconName='account-outline'
+                        iconSize={20} 
+                        placeholder='username' 
+                        label='username'
+                        // error='This is an error message'
+                         />
+                    <CustomInput 
+                        width='90%' 
+                        font='Poppins' 
+                        iconName='lock-outline'
+                        iconSize={18}
+                        placeholder='password' 
+                        label='password'
+                        // error='This is an error message'
+                         />
+
+                    <CustomButton 
+                        width='90%' 
+                        font='Poppins' 
+                        primary='#5037A9' 
+                        secondary='#48319D' 
+                        color='#FFFFFF' 
+                        title='Login' />
                 </View>
                 <ExpoStatusBar style='light'/>
             </ImageBackground>
