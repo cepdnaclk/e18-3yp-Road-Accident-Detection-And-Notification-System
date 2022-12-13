@@ -228,7 +228,8 @@ const SignUpScreen = ({navigation}) => {
                                 primary='#5037A9' 
                                 secondary='#48319D' 
                                 color='#FFFFFF' 
-                                title='Sign Up' />
+                                title='Sign Up'
+                                onPress={() => navigation.navigate('DriverHome')} />
                         </View>
                         <ExpoStatusBar style='light'/>
                     </ScrollView>
@@ -241,7 +242,6 @@ const SignUpScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         // flex: 1,
-        height: '100%',
         flexDirection: 'column',
     },
     image: {
