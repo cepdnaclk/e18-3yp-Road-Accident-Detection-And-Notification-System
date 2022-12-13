@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity, ScrollView, useWindowDimensions, Text } from 'react-native';
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
