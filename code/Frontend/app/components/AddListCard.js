@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     txtlabel: {
         fontSize: 20,
         color: 'rgba(219, 219, 219, 0.7)',
-        marginLeft: '10%',
+        marginLeft: '8%',
         letterSpacing: 1
     },
 })
