@@ -1,48 +1,59 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
+import { ImageBackground, Image, StyleSheet, View } from 'react-native';
+// import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 
-const StartupScreen = () => {
+import CustomButton from '../components/CustomButton';
+
+const WelcomeScreen = ({navigation}) => {
+    const [fontsLoaded] = useFonts({
+        'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
-        <LinearGradient 
-            style={styles.container}
-            colors={['#2E335A', '#1C1B33']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}>
-            
-            <View style={styles.welcomeLogo}>
-                <Image source={require('../assets/img/LogoWelcome.png')} />
-            </View>
+        <View style={styles.container}>
+            <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
+                <View style={styles.welcomeLogo}>
+                    <Image source={require('../assets/img/LogoWelcome.png')} />
+                </View>
 
-            <View style={styles.buttons}>
-                <Pressable><Text>Sign Up</Text></Pressable>
-                {/* <Pressable>Login</Pressable> */}
-            </View>
-            <StatusBar style='light'/>
-
-        </LinearGradient>
+                <View style={styles.buttons}>
+                    <CustomButton width='45%' font='Poppins' primary='#5037A9' secondary='#48319D' color='#FFFFFF' title='Sign Up' onPress={() => navigation.navigate('SignUp')}/>
+                    <CustomButton width='45%' font='Poppins' primary='#C7C0E3' secondary='#AEA6CC' color='#5037A9' title='Login' onPress={() => navigation.navigate('Login')}/>
+                </View>
+                <StatusBar style='light'/>
+            </ImageBackground>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    image: {
+        flex: 1,
+        resizeMode: 'cover',
         justifyContent: 'center',
-        width: '100%',
-        height: '100%',
     },
     welcomeLogo: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingTop: '25%',
     },
     buttons: {
         flex: 2,
         alignItems: 'center',
-        justifyContent: 'center'
-    }
+        justifyContent: 'flex-end',
+        paddingBottom: '25%',
+    },
 })
 
-export default StartupScreen;
+export default WelcomeScreen;
