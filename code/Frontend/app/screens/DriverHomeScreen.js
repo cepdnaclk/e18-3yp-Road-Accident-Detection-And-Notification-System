@@ -16,84 +16,13 @@ import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 
 import CustomInput from '../components/CustomInput';
-
-const renderItem = (state) => {
-    if (state === 0) {
-        return (
-            <View style={styles.additionalComp}>
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='hospital-box-outline'
-                    iconSize={20} 
-                    placeholder='hospital' 
-                    label='hospital'
-                    // error='This is an error message'
-                    />
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='card-outline'
-                    iconSize={20} 
-                    placeholder='license plate number' 
-                    label='licenseplateno'
-                    // error='This is an error message'
-                    />
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='account-outline'
-                    iconSize={20} 
-                    placeholder='driving license' 
-                    label='drivinglicense'
-                    // error='This is an error message'
-                    />
-
-            </View>
-        )
-    } else if (state === 1) {
-        return (
-            <View style={styles.additionalComp}>
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='hospital-box-outline'
-                    iconSize={20} 
-                    placeholder='vehicle type' 
-                    label='vehicletype'
-                    // error='This is an error message'
-                    />
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='card-outline'
-                    iconSize={20} 
-                    placeholder='license plate number' 
-                    label='licenseplateno'
-                    // error='This is an error message'
-                    />
-                <CustomInput 
-                    width='90%' 
-                    font='Poppins' 
-                    iconName='account-outline'
-                    iconSize={20} 
-                    placeholder='device number' 
-                    label='deviceno'
-                    // error='This is an error message'
-                    />
-            </View>
-        )
-    } else {
-        return null
-    }
-}
+import ContactListCard from '../components/ContactListCard';
+import AddListCard from '../components/AddListCard';
 
 const DriverHomeScreen = ({navigation}) => {
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
-
-    const [state, setState] = useState(1);
 
     const [fontsLoaded] = useFonts({
         'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
@@ -123,7 +52,8 @@ const DriverHomeScreen = ({navigation}) => {
                     </View>
 
                     <View style={{flex: 1}}>
-                        
+                        <ContactListCard />
+                        <AddListCard />
                     </View>
                 </ImageBackground>
             </View>
@@ -160,6 +90,7 @@ const styles = StyleSheet.create({
         // backgroundColor: '#5037A9',
         justifyContent: 'center',
         paddingHorizontal: '4%',
+        marginBottom: '3%',
     },
     txtlabel: {
         color: '#D8D5DF',
