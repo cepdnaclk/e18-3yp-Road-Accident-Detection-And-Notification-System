@@ -15,9 +15,15 @@ import {
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 
-import CustomInput from '../components/CustomInput';
 import ContactListCard from '../components/ContactListCard';
 import AddListCard from '../components/AddListCard';
+import ProfilePic from '../assets/profPic/ProfilePic';
+
+// const list = [
+//     {
+//         name
+//     }
+// ]
 
 const DriverHomeScreen = ({navigation}) => {
 
@@ -52,8 +58,12 @@ const DriverHomeScreen = ({navigation}) => {
                     </View>
 
                     <View style={{flex: 1}}>
-                        <ContactListCard />
-                        <AddListCard />
+                        {ProfilePic.map((item) => (
+                            <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
+                        )
+                    )}
+                        {/* <ContactListCard name={} /> */}
+                        <AddListCard onPress={() => {console.log('pressed')}} />
                     </View>
                 </ImageBackground>
             </View>

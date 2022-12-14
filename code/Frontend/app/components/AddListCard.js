@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
@@ -14,10 +14,14 @@ function AddListCard(props) {
     }
 
     return (
-        <View style={styles.container}>
-            <AntDesign name="plus" size={50} color="rgba(219, 219, 219, 0.7)" />
-            <Text style={[styles.txtlabel, {fontFamily: 'YanoneKaff'}]}>Add emergency contact</Text>
-        </View>
+        <TouchableOpacity
+            onPress={() => props.onPress?.()}>
+                
+            <View style={styles.container}>
+                <AntDesign name="plus" size={50} color="rgba(219, 219, 219, 0.7)" />
+                <Text style={[styles.txtlabel, {fontFamily: 'YanoneKaff'}]}>Add emergency contact</Text>
+            </View>
+        </TouchableOpacity>
     );
 }
 

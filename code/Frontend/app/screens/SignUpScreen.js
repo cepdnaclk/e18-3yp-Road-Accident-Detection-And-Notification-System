@@ -300,14 +300,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
 
-        shadowColor: "#1c1b21",
+        shadowColor: "#000",
         shadowOffset: {
-            width: 0,
-            height: 6,
+            width: 5,
+            height: 5,
         },
-        shadowOpacity:  0.9,
-        shadowRadius: 5.62,
-        elevation: 8
+        shadowOpacity:  0.75,
+        shadowRadius: 5,
+        elevation: 8,
     },
     btnIcon: {
         width: 43, 
