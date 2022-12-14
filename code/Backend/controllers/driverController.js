@@ -1,6 +1,6 @@
 const Driver = require('../models/driverModel');
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
 // @desc Register Driver
@@ -80,7 +80,7 @@ const loginDriver =asyncHandler( async(req,res) =>{
 
 // @desc Get Driver data
 // @route GET /api/drivers/me
-// @access Public
+// @access Private
 const getMe = asyncHandler( async(req,res) =>{
    
     const{_id,fname,lname,nic, email, telNum, vehicleType, lisencePlateNum, deviceNum} = await Driver.findById(req.driver.id)
@@ -98,6 +98,33 @@ const getMe = asyncHandler( async(req,res) =>{
     })
 });
 
+// @desc Delete Driver data
+// @route DELETE /api/drivers/me
+// @access Private
+const removeMe = asyncHandler( async(req,res) =>{
+   
+    const driver = await Driver.findById(req.driver.id);
+    
+    driver.remove()
+    res.status(200).json({ 
+            id: req.driver.id,
+            message: "Driver Successfully Deleted"
+        })
+});
+
+// @desc Update Driver data
+// @route PUT /api/drivers/me
+// @access Private
+const updateMe = asyncHandler( async(req,res) =>{
+   
+    const updatedDriver = await Driver.findByIdAndUpdate(req.driver.id, req.body, {
+        new:true,
+    });
+    res.status(200).json(updatedDriver)
+ 
+});
+
+
 //Generate JWT
 const generateToken = (id) =>{
     return jwt.sign({id},process.env.JWT_SECRET,{
@@ -108,5 +135,7 @@ const generateToken = (id) =>{
 module.exports = {
     registerDriver,
     loginDriver,
-    getMe
+    getMe,
+    removeMe,
+    updateMe
 }

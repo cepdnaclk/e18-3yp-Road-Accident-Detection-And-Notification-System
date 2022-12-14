@@ -40,7 +40,18 @@ const driverSchema = mongoose.Schema({
     password:{
         type: String,
         required: [true, 'Please add a password']
-    }
+    },
+    location: {
+        type: {
+          type: String,
+          enum: ['Point']
+        },
+        coordinates: {
+          type: [Number],
+          index: '2dsphere'
+        },
+        formattedAddress: String
+      }
 },
 {
     timestamps:true

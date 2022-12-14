@@ -72,6 +72,7 @@ const loginUser =asyncHandler( async(req,res) =>{
 // @access Public
 const getMe = asyncHandler( async(req,res) =>{
    
+    console.log(req.user);
     const{_id,name,email} = await User.findById(req.user.id)
 
     res.status(200).json({
