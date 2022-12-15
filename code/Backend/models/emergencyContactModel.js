@@ -2,11 +2,10 @@ const mongoose = require('mongoose')
 
 const emergencyContactSchema = mongoose.Schema(
     {
-    driver:{
+    driver:[{
             type: mongoose.Schema.Types.ObjectId,
-            // required: true,
             ref: 'Driver',
-          },
+          }],
     fname:{
         type: String,
         required: [true, 'Please add a first name']

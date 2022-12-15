@@ -136,21 +136,19 @@ const updateMe = asyncHandler( async(req,res) =>{
             }
         } 
     });
+
+    const isInEmergencyContactCollection = await EmergencyContact.findOne({"telNum":req.body.emergency.phoneNum})
+    
+    if(isInEmergencyContactCollection){
+        await EmergencyContact.updateOne({_id: isInEmergencyContactCollection.id},{driver: req.driver.id})
+    }
+
+
     res.status(200).json(await Driver.findById(req.driver.id))
     return;
 }
 
-    // if((req.body.emergency.name && !req.body.emergency.phoneNum) || (!req.body.emergency.name && req.body.emergency.phoneNum)){
-    //     res.status(400);
-    //     throw new Error('One field is missing');
-    // }
 
-    // if(req.body.emergency.name && req.body.emergency.phoneNum){
-    //     const name = body.emergency.name;
-    //     const emergencyPhoneNum = body.emergency.phoneNum;
-
-    // }
-    
     const updatedDriver = await Driver.findByIdAndUpdate(req.driver.id, req.body, {
         new:true,
     });
