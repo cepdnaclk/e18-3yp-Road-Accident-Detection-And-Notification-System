@@ -41,6 +41,14 @@ const driverSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add a password']
     },
+    emergency:[{
+            name: {
+                type: String
+        },
+            phoneNum:{
+                type: String,
+        }
+    }],
     location: {
         type: {
           type: String,
@@ -51,7 +59,7 @@ const driverSchema = mongoose.Schema({
           index: '2dsphere'
         },
         formattedAddress: String
-      }
+    }
 },
 {
     timestamps:true

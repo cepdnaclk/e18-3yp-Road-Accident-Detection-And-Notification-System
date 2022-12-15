@@ -1,4 +1,5 @@
 const Driver = require('../models/driverModel');
+const EmergencyContact = require('../models/emergencyContactModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -70,6 +71,7 @@ const loginDriver =asyncHandler( async(req,res) =>{
             vehicleType:driver.vehicleType,
             lisencePlateNum:driver.lisencePlateNum,
             deviceNum:driver.deviceNum,
+            emergency: driver.emergency,
             token:generateToken(driver._id),
         })
     } else{
@@ -83,7 +85,7 @@ const loginDriver =asyncHandler( async(req,res) =>{
 // @access Private
 const getMe = asyncHandler( async(req,res) =>{
    
-    const{_id,fname,lname,nic, email, telNum, vehicleType, lisencePlateNum, deviceNum} = await Driver.findById(req.driver.id)
+    const{_id,fname,lname,nic, email, telNum, vehicleType, lisencePlateNum, deviceNum,emergency} = await Driver.findById(req.driver.id)
 
     res.status(200).json({
         id:_id,
@@ -95,6 +97,7 @@ const getMe = asyncHandler( async(req,res) =>{
         vehicleType,
         lisencePlateNum,
         deviceNum,
+        emergency,
     })
 });
 
@@ -116,13 +119,46 @@ const removeMe = asyncHandler( async(req,res) =>{
 // @route PUT /api/drivers/me
 // @access Private
 const updateMe = asyncHandler( async(req,res) =>{
-   
+    
+    if(req.body.emergency){
+
+        const emergencyContact = await Driver.findOne({"_id":req.driver.id, "emergency.phoneNum":req.body.emergency.phoneNum});
+
+        if(emergencyContact){
+            res.status(400)
+            throw new Error("Emergency Contact Already Exists")
+        }
+
+        const updatedDriver = await Driver.updateOne({ _id: req.driver.id }, { $push: { 
+            emergency: {
+                name:req.body.emergency.name,
+                phoneNum:req.body.emergency.phoneNum
+            }
+        } 
+    });
+    res.status(200).json(await Driver.findById(req.driver.id))
+    return;
+}
+
+    // if((req.body.emergency.name && !req.body.emergency.phoneNum) || (!req.body.emergency.name && req.body.emergency.phoneNum)){
+    //     res.status(400);
+    //     throw new Error('One field is missing');
+    // }
+
+    // if(req.body.emergency.name && req.body.emergency.phoneNum){
+    //     const name = body.emergency.name;
+    //     const emergencyPhoneNum = body.emergency.phoneNum;
+
+    // }
+    
     const updatedDriver = await Driver.findByIdAndUpdate(req.driver.id, req.body, {
         new:true,
     });
+
     res.status(200).json(updatedDriver)
  
 });
+
 
 
 //Generate JWT
