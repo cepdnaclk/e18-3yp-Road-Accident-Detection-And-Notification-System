@@ -9,23 +9,34 @@ import {
     TouchableOpacity, 
     ScrollView,
     useWindowDimensions,
-    Text, 
+    Text,
+    FlatList, 
 } from 'react-native';
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Entypo } from '@expo/vector-icons';
 
 import ContactListCard from '../components/ContactListCard';
 import AddListCard from '../components/AddListCard';
 import ProfilePic from '../assets/profPic/ProfilePic';
 
-// const list = [
-//     {
-//         name
-//     }
-// ]
+// const updateList = (list) => {
+//     return list.push(
+//         {
+//             name: 'AKITHA PATHIRANA',
+//             telephoneNo: '077 5555 554',
+//             image: require('../assets/profPic/picture2.jpg'),
+//         }
+//     )
+// }
+const renderItem = ({ item }) => (
+    <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
+);
 
 const DriverHomeScreen = ({navigation}) => {
+
+
+    const [list, setList] = useState(ProfilePic);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -55,15 +66,34 @@ const DriverHomeScreen = ({navigation}) => {
 
                     <View style={styles.label}>
                         <Text style={[styles.txtlabel, {fontFamily: 'YanoneKaff'}]}>My emergency contacts</Text>
+                        <TouchableOpacity onPress={() => {
+                                const e = {
+                                    name: 'NEW',
+                                    telephoneNo: Math.random(),
+                                    image: require('../assets/profPic/picture1.jpg'),
+                                };
+                                setList([...list, e]);
+                            }}>
+                            <Ionicons name="ios-add" size={30} color="rgba(219, 219, 219, 0.7)" />
+                        </TouchableOpacity>
                     </View>
 
                     <View style={{flex: 1}}>
-                        {ProfilePic.map((item) => (
-                            <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
-                        )
-                    )}
-                        {/* <ContactListCard name={} /> */}
-                        <AddListCard onPress={() => {console.log('pressed')}} />
+                        <FlatList style={{flex: 1}}
+                            data={list}
+                            renderItem={renderItem}
+                            keyExtractor={item => item.telephoneNo}
+                        />
+                        
+                        {/* <AddListCard onPress={() => { 
+                            const e = {
+                                name: 'NEW',
+                                telephoneNo: Math.random(),
+                                image: require('../assets/profPic/picture1.jpg'),
+                            };
+                            setList([...list, e]);
+                        }} /> */}
+                        {/* <View style={{flex: 1, justifyContent: 'flex-end'}}></View> */}
                     </View>
                 </ImageBackground>
             </View>
@@ -97,10 +127,12 @@ const styles = StyleSheet.create({
     },
     label: {
         height: '4%',
+        flexDirection: 'row',
         // backgroundColor: '#5037A9',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: '4%',
-        marginBottom: '3%',
+        marginBottom: '3.5%',
     },
     txtlabel: {
         color: '#D8D5DF',

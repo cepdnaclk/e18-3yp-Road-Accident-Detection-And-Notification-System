@@ -13,7 +13,7 @@ const profile = [
         name: 'AKITHA PATHIRANA',
         telephoneNo: '077 5555 555',
         image: require('./picture3.jpg'),
-    }    
+    },     
 ]
 
 export default profile;
