@@ -14,28 +14,19 @@ import {
 } from 'react-native';
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { Ionicons, Entypo } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import ContactListCard from '../components/ContactListCard';
-import AddListCard from '../components/AddListCard';
 import ProfilePic from '../assets/profPic/ProfilePic';
+import ModalPopUp from '../components/ModalPopUp';
 
-// const updateList = (list) => {
-//     return list.push(
-//         {
-//             name: 'AKITHA PATHIRANA',
-//             telephoneNo: '077 5555 554',
-//             image: require('../assets/profPic/picture2.jpg'),
-//         }
-//     )
-// }
 const renderItem = ({ item }) => (
     <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
 );
 
 const DriverHomeScreen = ({navigation}) => {
 
-
+    const [visible, setVisible] = useState(false);
     const [list, setList] = useState(ProfilePic);
 
     const size = useWindowDimensions();
@@ -52,6 +43,9 @@ const DriverHomeScreen = ({navigation}) => {
 
     return (
         <ScrollView>
+            <ModalPopUp visible={visible}>
+                
+            </ModalPopUp>
             <View style={[styles.container, {height: height}]}>
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
@@ -66,7 +60,7 @@ const DriverHomeScreen = ({navigation}) => {
 
                     <View style={styles.label}>
                         <Text style={[styles.txtlabel, {fontFamily: 'YanoneKaff'}]}>My emergency contacts</Text>
-                        <TouchableOpacity onPress={() => {
+                        {/* <TouchableOpacity onPress={() => {
                                 const e = {
                                     name: 'NEW',
                                     telephoneNo: Math.random(),
@@ -74,6 +68,9 @@ const DriverHomeScreen = ({navigation}) => {
                                 };
                                 setList([...list, e]);
                             }}>
+                            <Ionicons name="ios-add" size={30} color="rgba(219, 219, 219, 0.7)" />
+                        </TouchableOpacity> */}
+                        <TouchableOpacity onPress={() => {setVisible(true)}}>
                             <Ionicons name="ios-add" size={30} color="rgba(219, 219, 219, 0.7)" />
                         </TouchableOpacity>
                     </View>
@@ -84,16 +81,6 @@ const DriverHomeScreen = ({navigation}) => {
                             renderItem={renderItem}
                             keyExtractor={item => item.telephoneNo}
                         />
-                        
-                        {/* <AddListCard onPress={() => { 
-                            const e = {
-                                name: 'NEW',
-                                telephoneNo: Math.random(),
-                                image: require('../assets/profPic/picture1.jpg'),
-                            };
-                            setList([...list, e]);
-                        }} /> */}
-                        {/* <View style={{flex: 1, justifyContent: 'flex-end'}}></View> */}
                     </View>
                 </ImageBackground>
             </View>
@@ -103,6 +90,7 @@ const DriverHomeScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
     container: {
+        position: 'relative',
         // flex: 1,
         flexDirection: 'column',
     },
