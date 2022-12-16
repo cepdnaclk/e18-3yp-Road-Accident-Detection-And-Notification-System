@@ -2880,9 +2880,10 @@ section {
 }
 
 .image-slider{
-  background-color: #7e8091;
+  background-color: #9b9dad;
   width: 100%;
   height: auto;
   padding: 30px 15px 30px 15px;
   justify-content: center;
+  border-radius: 20px;
 }
