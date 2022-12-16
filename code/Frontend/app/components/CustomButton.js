@@ -20,7 +20,7 @@ function CustomButton(props) {
                 <Text style={{
                     color: props.color, 
                     fontFamily: props.font, 
-                    fontSize: 17,
+                    fontSize: (props.fontSize ? props.fontSize : 17),
                     letterSpacing: 0.8}}> 
 
                     {props.title}
