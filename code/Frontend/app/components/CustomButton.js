@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 function CustomButton(props) {
     return (
         <TouchableOpacity 
+            activeOpacity={0.7}
             onPress={() => props.onPress?.()}
             style={{
                 height: 42, 

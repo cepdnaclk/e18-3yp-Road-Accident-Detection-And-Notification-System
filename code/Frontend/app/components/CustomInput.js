@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { StyleSheet, View, TextInput, Text, Touchable, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
-function CustomInput({ 
-    label,
+function CustomInput({
     width, 
     iconName,
     iconSize, 
     font, 
     error,
+    password,
     onFocus = () => {},
+    onPress = () => {},
+    validateDevNo,
+    validate,
     ...props }) {
 
     const [isFocused, setisFocused] = useState(false);
+    const [hidePassword, setHidePassword] = useState(password);
 
     return (
         <View
@@ -45,6 +49,7 @@ function CustomInput({
                     fontSize: 15,
                     letterSpacing: 0.1}}
 
+                    secureTextEntry={hidePassword}
                     placeholderTextColor= 'rgba(181, 181, 181, 0.4)' 
                     autoCorrect= {false}
                     onFocus={() => { 
@@ -56,6 +61,21 @@ function CustomInput({
                     }}
 
                     {...props} />
+
+                {password && <TouchableOpacity activeOpacity={0.7} onPress={() => setHidePassword(!hidePassword)}>
+                    <Ionicons 
+                        name={hidePassword ? "eye-outline" : "eye-off-outline"} 
+                        size={13} 
+                        color="rgba(181, 181, 181, 0.6)" />
+                </TouchableOpacity>}
+
+                {validate && <TouchableOpacity activeOpacity={0.7} onPress={() => {validateDevNo()}}>
+                    <MaterialCommunityIcons 
+                        name="account-question-outline" 
+                        size={15} 
+                        color="rgba(181, 181, 181, 0.6)" />
+                </TouchableOpacity>}
+
             </View>
             {error && (
                 <Text style={{
