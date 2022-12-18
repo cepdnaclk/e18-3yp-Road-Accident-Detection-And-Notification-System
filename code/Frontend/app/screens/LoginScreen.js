@@ -41,8 +41,7 @@ const LoginScreen = ({navigation}) => {
                             font='Poppins' 
                             iconName='account-outline'
                             iconSize={20} 
-                            placeholder='username' 
-                            label='username'
+                            placeholder='username'
                             // error='This is an error message'
                             />
                         <CustomInput 
@@ -50,8 +49,7 @@ const LoginScreen = ({navigation}) => {
                             font='Poppins' 
                             iconName='lock-outline'
                             iconSize={18}
-                            placeholder='password' 
-                            label='password'
+                            placeholder='password'
                             // error='This is an error message'
                             />
 
