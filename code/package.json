@@ -4,7 +4,7 @@
   "description": "Road Accident Detection And Notification System",
   "main": "server.js",
   "scripts": {
-    "start": " node Backend/server.js",
+    "start": " nodemon Backend/server.js",
     "server": " nodemon Backend/server.js"
   },
   "author": "e18203-e18264-e18375",

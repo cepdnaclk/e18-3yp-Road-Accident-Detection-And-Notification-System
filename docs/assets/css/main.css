@@ -66,7 +66,7 @@ section {
 }
 
 .sections-bg {
-  background-color: #f6f6f6;
+  background-color: #f5f3f3;
 }
 
 .section-header {
@@ -1583,34 +1583,7 @@ section {
   width: 10%;
 }
 
-@media (min-width: 1200px){
-  .test-plan table{
-    margin: auto;
-    width: 100% !important;
-  }
-  }
-  
-  .test-plan thead{
-    font-size: 20px;
-    font-weight: 700;
-    background-color: var(--color-primary);
-  }
-  .test-plan tbody{
-    font-size: 17px;
-  }
-  .test-plan th{
-    width: 10%;
-    font-size: 22px;
-  }
 
-  .test-plan tbody tr :first-child{
-    background-color: #3e4369;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 25px;
-    /* min-height: 45px;
-    height: 45px; */
-  }
 
   
 
@@ -2877,4 +2850,13 @@ section {
   display: block;
   max-width: 80%;
   height: auto;
+}
+
+.image-slider{
+  background-color: #9b9dad;
+  width: 100%;
+  height: auto;
+  padding: 30px 15px 30px 15px;
+  justify-content: center;
+  border-radius: 20px;
 }
