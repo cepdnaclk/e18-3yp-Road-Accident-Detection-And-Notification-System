@@ -13,4 +13,4 @@ E/18/203 - Shehan Madhusanka     : e18203@eng.pdn.ac.lk
 E/18/264 - Madushan Nanayakkara  : e18264@eng.pdn.ac.lk
 
 
-E/18/375 - Akitha Pathirana      : e18375@eng.pdn.ac.lk
+E/18/375 - Akitha Vindula Pathirana      : e18375@eng.pdn.ac.lk
