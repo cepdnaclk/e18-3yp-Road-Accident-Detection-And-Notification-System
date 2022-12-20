@@ -1,8 +1,10 @@
 import React, { useState} from 'react';
-import { View, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+
+import CustomNavigationBar from '../components/CustomNavigationBar';
 
 const AmbulanceImg = require('../assets/icons/ambulance_3d_left.png')
 
@@ -183,6 +185,7 @@ function AmbulanceHome({navigation}) {
     return (
         <View style={styles.container}>
             <View style={styles.topPanel}>
+                <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
                 <TouchableOpacity 
                     onPress={() => navigation.navigate('Welcome')}
                     style={styles.back}>
@@ -204,6 +207,7 @@ function AmbulanceHome({navigation}) {
                     coordinate={origin}
                     image={AmbulanceImg}/>
             </MapView>
+            <CustomNavigationBar />
             <ExpoStatusBar style='dark'/>
         </View>
     );
@@ -218,11 +222,15 @@ const styles = StyleSheet.create({
     topPanel: {
         position: 'absolute',
         zIndex: 10,
-        height: '9%',
-        width: '90%',
-        backgroundColor: 'rgba(90, 93, 125, 0.8)',
+        height: '8%',
+        width: '95%',
+        backgroundColor: 'rgba(90, 93, 125, 0.3)',
         borderRadius: 15,
         top: StatusBar.currentHeight,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingRight: 8,
     },
     map: {
         width: '100%',
