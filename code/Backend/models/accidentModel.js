@@ -5,6 +5,18 @@ const accidentSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add device number'],
     },
+    activeState:{
+        type: String,
+        required: [true, 'Please add active state']
+    },
+    longitude:{
+        type: String,
+        required: [true, 'Please add longitude']
+    },
+    latitude:{
+        type: String,
+        required: [true, 'Please add latitude']
+    }
 
     // emergency:[{
     //         name: {
@@ -24,12 +36,8 @@ const accidentSchema = mongoose.Schema({
     //       index: '2dsphere'
     //     },
     //     formattedAddress: String
-    // }
-    
-    coordinates: {
-        type: [Number],
-        index: '2dsphere'
-    },      
+    // } 
+         
 },
 
 {
