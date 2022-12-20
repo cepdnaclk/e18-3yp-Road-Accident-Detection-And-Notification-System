@@ -7,6 +7,6 @@ const{findAmbulance} = require('../controllers/eventController')
 const {protect} = require('../middleware/driverAuthMiddleware')
 
 router.post('/',addAccident);
-router.post('/getambulance', findAmbulance);
+// router.post('/getambulance', findAmbulance);
 
 module.exports = router
