@@ -120,6 +120,19 @@ const removeMe = asyncHandler( async(req,res) =>{
 // @access Private
 const updateMe = asyncHandler( async(req,res) =>{
     
+    const updatedDriver = await Driver.findByIdAndUpdate(req.driver.id, req.body, {
+        new:true,
+    });
+
+    res.status(200).json(updatedDriver);
+ 
+});
+
+// @desc Update driver data with emergency contacts
+// @route PUT /api/drivers/addemergency
+// @access Private
+const addEmergency = asyncHandler( async(req,res) =>{
+    
     if(req.body.emergency){
 
         const emergencyContact = await Driver.findOne({"_id":req.driver.id, "emergency.phoneNum":req.body.emergency.phoneNum});
@@ -140,24 +153,50 @@ const updateMe = asyncHandler( async(req,res) =>{
     const isInEmergencyContactCollection = await EmergencyContact.findOne({"telNum":req.body.emergency.phoneNum})
     
     if(isInEmergencyContactCollection){
-        await EmergencyContact.updateOne({_id: isInEmergencyContactCollection.id},{driver: req.driver.id})
-    }
-
-
+        await EmergencyContact.updateOne({_id: isInEmergencyContactCollection.id},{ $push: { 
+            driver:req.driver.id
+        } 
+    })
+}
     res.status(200).json(await Driver.findById(req.driver.id))
     return;
+
 }
-
-
-    const updatedDriver = await Driver.findByIdAndUpdate(req.driver.id, req.body, {
-        new:true,
-    });
-
-    res.status(200).json(updatedDriver)
- 
 });
 
+// @desc Remove emergency contact from driver details
+// @route PUT /api/drivers/removeemergency/:phoneNum
+// @access Private
+const removeEmergency = asyncHandler(async(req,res) =>{
 
+    const emergencyContact = await Driver.findOne({"_id":req.driver.id, "emergency.phoneNum":req.params.phoneNum});
+    
+    if(!emergencyContact){
+        res.status(400)
+        throw new Error("Emergency Contact Not Found")
+    }
+
+    const updatedDriver = await Driver.updateOne({ _id: req.driver.id }, { $pull: { 
+                    emergency: {
+                        phoneNum:req.params.phoneNum
+                    }
+        } 
+    });
+
+    const isInEmergencyContactCollection = await EmergencyContact.findOne({"telNum":req.params.phoneNum})
+    
+        if(isInEmergencyContactCollection){
+        await EmergencyContact.updateOne({_id: isInEmergencyContactCollection.id},{ $pull: { 
+            driver:req.driver.id
+        } 
+    }
+);
+}
+    res.status(200).json(await Driver.findById(req.driver.id));
+    return;
+
+});
+    
 
 //Generate JWT
 const generateToken = (id) =>{
@@ -171,5 +210,7 @@ module.exports = {
     loginDriver,
     getMe,
     removeMe,
-    updateMe
+    updateMe,
+    addEmergency,
+    removeEmergency
 }
