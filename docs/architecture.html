@@ -92,7 +92,7 @@
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
               <h2>Architecture</h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+              <p>Higer-level overview of the interactions between each sub-component of the system which include the physical device, AWS, and various end users.</p>
             </div>
           </div>
         </div>
@@ -123,18 +123,23 @@
           <div class="col-lg-12">
             <div class="content ps-0 ps-lg-5">
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
+                How the Data flows through the system,
               </p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A sit ut voluptates dicta quisquam reprehenderit voluptatum maiores recusandae. Atque provident, similique debitis dolor tempora saepe nihil iure accusantium quibusdam quos.
-                Distinctio eligendi illum, ea eveniet vero, qui laborum soluta delectus dolorum porro amet.
+              <p>
+                During an accident, details of the accident detection signal, gps location and critical level will be sent to the cloud. Simultaneously a text message will also be sent to
+                the relatives directly from the hardware. The backend code in the cloud deals with the ambulances. It will repeatedly take location of ambulances and in case of an 
+                accident, the location of the accident will be sent to the ambulances. This process will ensure that at least one ambulance picks up the potential accident.
               </p>
-              <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
-              </ul>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat sunt delectus, quidem, ab neque nostrum mollitia iure accusamus dolor quae dolorum tempora. Esse tempora hic dolorum? Eligendi in quo illum.</p>
+              <p>
+                The cloud will also show locations of accidents on a map to the police.
+              </p>
+              <p>
+                There are two main storage points in the system. The hardware and the cloud. The hardware will store the 3 dimensional acceleration values taken every 10 milliseconds. 
+                Only two subsequent sets of values are required to measure unusually sudden changes of acceleration thus only two sets will be stored.
+              </p>
+              <p>
+                The cloud will store values about the main user, in this case the driver and the details of their relatives such as the contact numbers.The cloud will also store information about police station locations and ambulance locations as well.
+              </p>
             </div>
           </div>
         </div>
@@ -157,18 +162,13 @@
           <div class="col-lg-12">
             <div class="content ps-0 ps-lg-5">
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
+                After assembling the hardware components,the sampling rate is set to 10 mili seconds. So the accelerometer will collect data every 10 milliseconds.
+                The accelerometer will then weigh these sensored values with the calibrated weights. After that the 3 dimensional vector sum of these values is calculated .                
               </p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A sit ut voluptates dicta quisquam reprehenderit voluptatum maiores recusandae. Atque provident, similique debitis dolor tempora saepe nihil iure accusantium quibusdam quos.
-                Distinctio eligendi illum, ea eveniet vero, qui laborum soluta delectus dolorum porro amet.
+              <p>
+                If that single value is above a certain threshold, then the system classifies the situation as a crash. This threshold for acceleration is determined 
+                through trial and error.
               </p>
-              <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
-              </ul>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat sunt delectus, quidem, ab neque nostrum mollitia iure accusamus dolor quae dolorum tempora. Esse tempora hic dolorum? Eligendi in quo illum.</p>
             </div>
           </div>
 
