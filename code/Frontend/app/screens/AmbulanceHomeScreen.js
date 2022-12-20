@@ -67,11 +67,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    back: {
-        // top: StatusBar.currentHeight,
-        top
-        right: 20,
-    },
 })
 
 export default AmbulanceHome;

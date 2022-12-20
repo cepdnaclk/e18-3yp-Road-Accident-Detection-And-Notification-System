@@ -6,6 +6,7 @@ import WelcomeScreen from './app/screens/WelcomeScreen';
 import LoginScreen from './app/screens/LoginScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 import DriverHomeScreen from './app/screens/DriverHomeScreen';
+import AmbulanceHomeScreen from './app/screens/AmbulanceHomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name='SignUp' component={SignUpScreen}/>
 
         <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
+        <Stack.Screen name='AmbulanceHome' component={AmbulanceHomeScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
