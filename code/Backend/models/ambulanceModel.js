@@ -38,18 +38,15 @@ const ambulanceSchema = mongoose.Schema({
     },
     location: {
         type: {
-          type: String,
-          enum: ['Point']
+          type: String
         },
-        coordinates: {
-          type: [Number],
-          index: '2dsphere'
-        },
-        formattedAddress: String
+        coordinates: []
     }
 },
 {
     timestamps:true
 })
+
+ambulanceSchema.index({location:"2dsphere"})
 
 module.exports = mongoose.model('Ambulance',ambulanceSchema);

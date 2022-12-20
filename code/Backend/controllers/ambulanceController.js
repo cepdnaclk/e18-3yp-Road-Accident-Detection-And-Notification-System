@@ -32,6 +32,8 @@ const registerAmbulance =asyncHandler(async(req,res) =>{
         password:hashedPassword
     })
 
+    // const ambulance = await Ambulance.create(req.body);
+
     if(ambulance){
         res.status(201).json({
             _id:ambulance.id,
