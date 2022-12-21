@@ -20,7 +20,8 @@ const LoginScreen = ({navigation}) => {
         password: '',
     });
     const [errors, setErrors] = useState({});
-    const { isLoading, UserLogin } = useContext(AuthContext);    
+    const { isLoading, UserLogin } = useContext(AuthContext);  
+    const { userInfo } = useContext(AuthContext);
 
     const handleOnChange = (text, input) => {
         setInputs(prevState => ({...prevState, [input]: text}));
@@ -33,8 +34,19 @@ const LoginScreen = ({navigation}) => {
         if (!inputs.email) {
             handleError('Please input email', 'email');
             valid = false;
-        } else if (inputs.email) {
-            handleError('have something', 'email');
+        } else if (!isValidEmail(inputs.email)) {
+            handleError('Please input valid email', 'email');
+            valid = false;
+        } else {
+            handleError('', 'email');
+        }
+
+        if (!inputs.password) {
+            handleError('Please input password', 'password');
+            valid = false;
+        } else if (inputs.password.length <= 4) {
+            handleError('Password should have at least 5 characters', 'password');
+            valid = false;
         }
         
         if (valid) {
@@ -42,8 +54,13 @@ const LoginScreen = ({navigation}) => {
         }
     };
 
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
     const LogIn = () => {
         UserLogin(inputs.email, inputs.password);
+        navigation.replace('DriverHome')
     }
 
     const handleError = (errorMsg, input) => {
@@ -95,7 +112,11 @@ const LoginScreen = ({navigation}) => {
                             placeholder='password'
                             onChangeText={(text) => handleOnChange(text, 'password')}
                             password 
-                            // error='This is an error message'
+                            value={inputs.password}
+                            error={errors.password}
+                            onFocus={() => {
+                                handleError(null, 'password');
+                            }}
                             />
 
                     </View>

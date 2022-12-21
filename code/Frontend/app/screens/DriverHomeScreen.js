@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { 
     ImageBackground, 
@@ -22,6 +22,7 @@ import ModalPopUp from '../components/ModalPopUp';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomNavigationBar from '../components/CustomNavigationBar';
+import { AuthContext } from '../context/AuthContext';
 
 const renderItem = ({ item }) => (
     <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
@@ -31,6 +32,13 @@ const DriverHomeScreen = ({navigation}) => {
 
     const [visible, setVisible] = useState(false);
     const [list, setList] = useState(ProfilePic);
+    const [modalInputs, setModalInputs] = useState({
+        fname: '',
+        lname: '',
+        tpNo: '',
+    });
+
+    const { AddEmergencyContact } = useContext(AuthContext);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -47,6 +55,10 @@ const DriverHomeScreen = ({navigation}) => {
             image: require('../assets/profPic/picture1.jpg'),
         };
         setList([...list, e]);
+    };
+
+    const handleOnChange = (text, input) => {
+        setModalInputs(prevState => ({...prevState, [input]: text}));
     };
 
     if (!fontsLoaded) {
@@ -71,6 +83,12 @@ const DriverHomeScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='first name' 
                         label='firstname'
+                        onChangeText={(text) => handleOnChange(text, 'fname')}
+                        value={modalInputs.fname}
+                        // error={errors.hospital}
+                        // onFocus={() => {
+                        //     handleError(null, 'hospital');
+                        // }}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -80,6 +98,8 @@ const DriverHomeScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='last name' 
                         label='lastname'
+                        onChangeText={(text) => handleOnChange(text, 'lname')}
+                        value={modalInputs.lname}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -89,6 +109,8 @@ const DriverHomeScreen = ({navigation}) => {
                         iconSize={18} 
                         placeholder='telephone number' 
                         label='telephonenumber'
+                        onChangeText={(text) => handleOnChange(text, 'tpNo')}
+                        value={modalInputs.tpNo}
                         // error='This is an error message'
                         />
                     <View style={styles.modalBottomBtns}>
@@ -101,7 +123,9 @@ const DriverHomeScreen = ({navigation}) => {
                             color='#DBDBDB' 
                             title='Add Contact'
                             onPress={() => {
-                                addContact('FNAME LNAME', '077 8888 999');
+                                const name = modalInputs.fname + ' ' + modalInputs.lname;
+                                addContact(name, modalInputs.tpNo);
+                                AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
                                 setVisible(false);
                             }} />
                         <CustomButton 
@@ -119,27 +143,18 @@ const DriverHomeScreen = ({navigation}) => {
             <View style={[styles.container, {height: height}]}>
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
-                        <TouchableOpacity 
+                        {/* <TouchableOpacity 
                             onPress={() => navigation.navigate('Welcome')}
                             style={styles.back}>
 
                             <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <Image source={require('../assets/img/LogoDriver.png')} style={{width: 110, height: 50}}/>
                     </View>
 
                     <View style={styles.label}>
                         <Text style={[styles.txtlabel, {fontFamily: 'YanoneKaff'}]}>My emergency contacts</Text>
-                        {/* <TouchableOpacity onPress={() => {
-                                const e = {
-                                    name: 'NEW',
-                                    telephoneNo: Math.random(),
-                                    image: require('../assets/profPic/picture1.jpg'),
-                                };
-                                setList([...list, e]);
-                            }}>
-                            <Ionicons name="ios-add" size={30} color="rgba(219, 219, 219, 0.7)" />
-                        </TouchableOpacity> */}
+                        
                         <TouchableOpacity onPress={() => {setVisible(true)}}>
                             <Ionicons name="ios-add" size={30} color="rgba(219, 219, 219, 0.7)" />
                         </TouchableOpacity>

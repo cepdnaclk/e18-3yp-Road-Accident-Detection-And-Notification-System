@@ -47,7 +47,7 @@ export const AuthProvider = ({children}) => {
             password,
         }
         console.log(body);
-        
+
         await axios
         .post(`${BASE_URL}/drivers/login`,body)
         .then(res =>{
@@ -63,13 +63,42 @@ export const AuthProvider = ({children}) => {
         });
     };
 
+    const AddEmergencyContact = async (fname,lname,telNo) =>{
+
+        let body ={
+            emergency: {
+                name: fname + ' ' + lname,
+                phoneNum: telNo
+            }
+        }
+        console.log(userInfo.token);
+        console.log(body);
+        // const header ={
+        //     headers: {Authorization: `Bearer ${userInfo.token}`},
+        // }
+        // console.log(body);
+
+        // await axios
+        // .put(`${BASE_URL}/drivers/addemergency`,body,header)
+        // .then(res =>{
+        //     let userInfo = res.data;
+        //     console.log(userInfo);
+        //     setUserInfo(userInfo);
+        //     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        // })
+        // .catch(e =>{
+        //     console.log(`Login error ${e}`);
+        // });
+    };
+
     return (
         <AuthContext.Provider 
             value={{
                 isLoading,
                 userInfo,
                 DriverRegister,
-                UserLogin
+                UserLogin,
+                AddEmergencyContact,
         }}>
             {children}
         </AuthContext.Provider>

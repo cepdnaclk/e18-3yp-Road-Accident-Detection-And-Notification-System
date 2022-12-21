@@ -184,43 +184,75 @@ const SignUpScreen = ({navigation}) => {
             handleError('Please input firstname', 'firstname');
             valid = false;
         } else if (inputs.firstname) {
-            handleError('have something', 'firstname');
+            handleError('', 'firstname');
         }
         if (!inputs.lastname) {
             handleError('Please input lastname', 'lastname');
+            valid = false;
         } else if (inputs.lastname) {
-            handleError('have something', 'lastname');
+            handleError('', 'lastname');
         }
         if (!inputs.email) {
-            handleError('Please input lastname', 'email');
-        } else if (!inputs.email.match(/\s+@\s+\.\s+/)) {
+            handleError('Please input email', 'email');
+            valid = false;
+        } else if (!isValidEmail(inputs.email)) {
             handleError('Please input valid email', 'email');
+            valid = false;
+        } else {
+            handleError('', 'email');
         }
         if (!inputs.NIC) {
-            handleError('Please input lastname', 'NIC');
+            handleError('Please input NIC number', 'NIC');
+            valid = false;
         } else if (inputs.NIC) {
-            handleError('have something', 'NIC');
+            handleError('', 'NIC');
         }
         if (!inputs.telephoneNo) {
             handleError('Please input lastname', 'telephoneNo');
-        } else if (inputs.telephoneNo) {
-            handleError('have something', 'telephoneNo');
+            valid = false;
+        } else if (inputs.telephoneNo.length < 9 || inputs.telephoneNo.length > 10) {
+            valid = false;
+            handleError('Invalid telephone Number', 'telephoneNo');
+        } else {
+            handleError('', 'telephoneNo');
         }
         if (!inputs.licensePltNo) {
             handleError('Please input lastname', 'licensePltNo');
+            valid = false;
         } else if (inputs.licensePltNo) {
-            handleError('have something', 'licensePltNo');
+            handleError('', 'licensePltNo');
         }
         ValidateDevNo(inputs.devNo)
-        // min password length 4
+
+        if (!inputs.password) {
+            handleError('Please input password', 'password');
+            valid = false;
+        } else if (inputs.password.length <= 4) {
+            handleError('Password should have at least 5 characters', 'password');
+            valid = false;
+        } else if (inputs.password && inputs.password != inputs.confPassword) {
+            handleError('Password mismatched', 'password');
+            valid = false;
+        }
+        if (!inputs.confPassword) {
+            handleError('Please input confirm password', 'confPassword');
+            valid = false;
+        } else if (inputs.confPassword.length <= 4) {
+            handleError('Password should have at least 5 characters', 'confpassword');
+            valid = false;
+        }
 
         if (valid) {
             signUp()
+            navigation.replace('DriverHome')
         }
     };
 
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
     const signUp = () => {
-        // Todo
         DriverRegister(
             inputs.firstname, 
             inputs.lastname, 
@@ -369,6 +401,11 @@ const SignUpScreen = ({navigation}) => {
                                 placeholder='password'
                                 onChangeText={(text) => handleOnChange(text, 'password')}
                                 password 
+                                value={inputs.password}
+                                error={errors.password}
+                                onFocus={() => {
+                                    handleError(null, 'password');
+                                }}
                                 // error='This is an error message'
                                 />
                             <CustomInput 
@@ -379,6 +416,11 @@ const SignUpScreen = ({navigation}) => {
                                 placeholder='confirm password'
                                 onChangeText={(text) => handleOnChange(text, 'confPassword')}
                                 password
+                                value={inputs.confPassword}
+                                error={errors.confPassword}
+                                onFocus={() => {
+                                    handleError(null, 'confPassword');
+                                }}
                                 // error='This is an error message'
                                 />
 
