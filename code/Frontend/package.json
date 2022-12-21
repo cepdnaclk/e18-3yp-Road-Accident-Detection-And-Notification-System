@@ -13,6 +13,7 @@
     "@expo/vector-icons": "^13.0.0",
     "@react-navigation/native": "^6.1.0",
     "@react-navigation/native-stack": "^6.9.5",
+    "axios": "^1.2.1",
     "expo": "~47.0.8",
     "expo-app-loading": "~2.1.1",
     "expo-blur": "~12.0.1",

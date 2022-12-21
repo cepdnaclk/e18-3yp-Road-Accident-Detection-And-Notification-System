@@ -21,6 +21,7 @@ import ProfilePic from '../assets/profPic/ProfilePic';
 import ModalPopUp from '../components/ModalPopUp';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
+import CustomNavigationBar from '../components/CustomNavigationBar';
 
 const renderItem = ({ item }) => (
     <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
@@ -153,6 +154,7 @@ const DriverHomeScreen = ({navigation}) => {
                     </View>
                 </ImageBackground>
             </View>
+            <CustomNavigationBar />
         </>
         // </ScrollView>
     );

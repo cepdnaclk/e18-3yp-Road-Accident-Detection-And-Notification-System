@@ -7,7 +7,7 @@ function CustomNavigationBar(props) {
     return (
         <LinearGradient 
             style={styles.container}
-            colors={['#2E335A', '#1C1B33']}
+            colors={['rgba(34, 35, 63, 0.2)', 'rgba(32, 32, 58, 0.2)']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}>
 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         paddingHorizontal: 25,
         paddingVertical: 10,
-        borderRadius: 15,
+        // borderRadius: 15,
         // marginBottom: 5,
         // elevation: 8,
     },
