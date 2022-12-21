@@ -10,7 +10,7 @@ router.post('/login',loginAmbulances);
 router.get('/me',protect,getMe);
 router.delete('/me',protect,removeMe);
 router.put('/me',protect,updateMe);
-router.post('/findaccident',assignAmbulance);
+router.get('/findaccident',assignAmbulance);
 
 
 module.exports = router
