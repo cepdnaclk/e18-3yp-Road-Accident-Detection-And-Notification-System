@@ -359,8 +359,9 @@ const SignUpScreen = ({navigation}) => {
                                 secondary='#48319D' 
                                 color='#FFFFFF' 
                                 title='Sign Up'
-                                onPress={() => ValidateInputs()} />
-                                {/* onPress={() => navigation.navigate('DriverHome')} /> */}
+                                // onPress={() => ValidateInputs()} />
+                                // onPress={() => navigation.navigate('DriverHome')} />
+                                onPress={() => navigation.navigate('AmbulanceHome')} />
                         </View>
                         <ExpoStatusBar style='light'/>
                     </ScrollView>
