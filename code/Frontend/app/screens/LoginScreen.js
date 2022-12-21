@@ -20,7 +20,7 @@ const LoginScreen = ({navigation}) => {
         password: '',
     });
     const [errors, setErrors] = useState({});
-    const { UserLogin } = useContext(AuthContext);    
+    const { isLoading, UserLogin } = useContext(AuthContext);    
 
     const handleOnChange = (text, input) => {
         setInputs(prevState => ({...prevState, [input]: text}));
@@ -30,11 +30,11 @@ const LoginScreen = ({navigation}) => {
         // Keyboard.dismiss();
         let valid = true;
 
-        if (!inputs.username) {
-            handleError('Please input username', 'username');
+        if (!inputs.email) {
+            handleError('Please input email', 'email');
             valid = false;
-        } else if (inputs.username) {
-            handleError('have something', 'username');
+        } else if (inputs.email) {
+            handleError('have something', 'email');
         }
         
         if (valid) {
@@ -61,7 +61,7 @@ const LoginScreen = ({navigation}) => {
     return (
         <ScrollView>
             <View style={[styles.container, {height: height}]}>
-                {/* <Spinner visible={isLoading} /> */}
+                <Spinner visible={isLoading} />
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 

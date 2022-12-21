@@ -43,15 +43,17 @@ export const AuthProvider = ({children}) => {
         setIsLoading(true);
  
         let body ={
-            email:email,
-            password:password
+            email,
+            password,
         }
+        console.log(body);
+        
         await axios
         .post(`${BASE_URL}/drivers/login`,body)
         .then(res =>{
             let userInfo = res.data;
-            setUserInfo(userInfo);
             console.log(userInfo);
+            setUserInfo(userInfo);
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
         })
