@@ -5,7 +5,6 @@ const assignAmbulance = asyncHandler(async (req, res) => {
     const activeCase = await ActiveCases.findOne({"lisencePlateNum":req.params.lisencePlateNum})
   
     if (!activeCase) {
-
       res.status(201).json({ state: "Not Active" })
     }
     else{
@@ -15,13 +14,9 @@ const assignAmbulance = asyncHandler(async (req, res) => {
             longitude:activeCase.longitude,
             latitude:activeCase.latitude
         })
-        
     }
-  
-   
 })
 
 module.exports = {
     assignAmbulance
-
 }

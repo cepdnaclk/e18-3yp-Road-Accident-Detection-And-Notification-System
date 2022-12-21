@@ -77,15 +77,10 @@ const loginEmergencyContact =asyncHandler( async(req,res) =>{
 // @access Private
 const getMe = asyncHandler( async(req,res) =>{
    
-    const{_id,fname,lname,email, nic, telNum } = await EmergencyContact.findById(req.emergencyContact.id)
+    const emergencyContact = await EmergencyContact.findById(req.emergencyContact.id)
 
     res.status(200).json({
-        id:_id,
-        fname,
-        lname,
-        nic,
-        email,
-        telNum
+        emergencyContact
     })
 });
 
