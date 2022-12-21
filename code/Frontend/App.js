@@ -7,22 +7,25 @@ import LoginScreen from './app/screens/LoginScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 import DriverHomeScreen from './app/screens/DriverHomeScreen';
 import AmbulanceHomeScreen from './app/screens/AmbulanceHomeScreen';
+import { AuthProvider } from './app/context/AuthContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name='StartUp' component={StartupScreen}/>
-        <Stack.Screen name='Welcome' component={WelcomeScreen}/>
-        <Stack.Screen name='Login' component={LoginScreen}/>
-        <Stack.Screen name='SignUp' component={SignUpScreen}/>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name='StartUp' component={StartupScreen}/>
+          <Stack.Screen name='Welcome' component={WelcomeScreen}/>
+          <Stack.Screen name='Login' component={LoginScreen}/>
+          <Stack.Screen name='SignUp' component={SignUpScreen}/>
 
-        <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
-        <Stack.Screen name='AmbulanceHome' component={AmbulanceHomeScreen}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
+          <Stack.Screen name='AmbulanceHome' component={AmbulanceHomeScreen}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity, ScrollView, useWindowDimensions, Text } from 'react-native';
 // import AppLoading from 'expo-app-loading';
@@ -7,11 +7,48 @@ import { Ionicons } from '@expo/vector-icons';
 
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+import { AuthContext } from '../context/AuthContext';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const LoginScreen = ({navigation}) => {
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
+
+    const [inputs, setInputs] = useState({
+        email: '',
+        password: '',
+    });
+    const [errors, setErrors] = useState({});
+    const { UserLogin } = useContext(AuthContext);    
+
+    const handleOnChange = (text, input) => {
+        setInputs(prevState => ({...prevState, [input]: text}));
+    };
+
+    const ValidateInputs = () => {
+        // Keyboard.dismiss();
+        let valid = true;
+
+        if (!inputs.username) {
+            handleError('Please input username', 'username');
+            valid = false;
+        } else if (inputs.username) {
+            handleError('have something', 'username');
+        }
+        
+        if (valid) {
+            LogIn()
+        }
+    };
+
+    const LogIn = () => {
+        UserLogin(inputs.email, inputs.password);
+    }
+
+    const handleError = (errorMsg, input) => {
+        setErrors((prevState) => ({...prevState, [input]: errorMsg}));
+    };
 
     const [fontsLoaded] = useFonts({
         'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
@@ -24,6 +61,7 @@ const LoginScreen = ({navigation}) => {
     return (
         <ScrollView>
             <View style={[styles.container, {height: height}]}>
+                {/* <Spinner visible={isLoading} /> */}
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
@@ -37,19 +75,26 @@ const LoginScreen = ({navigation}) => {
                     
                     <View style={styles.middle}>
                         <CustomInput 
-                            width='90%' 
+                            width='85%' 
                             font='Poppins' 
-                            iconName='account-outline'
+                            iconName='email-outline'
                             iconSize={20} 
-                            placeholder='username'
-                            // error='This is an error message'
+                            placeholder='email'
+                            onChangeText={(text) => handleOnChange(text, 'email')}
+                            value={inputs.email}
+                            error={errors.email}
+                            onFocus={() => {
+                                handleError(null, 'email');
+                            }}
                             />
                         <CustomInput 
-                            width='90%' 
+                            width='85%' 
                             font='Poppins' 
                             iconName='lock-outline'
                             iconSize={18}
                             placeholder='password'
+                            onChangeText={(text) => handleOnChange(text, 'password')}
+                            password 
                             // error='This is an error message'
                             />
 
@@ -57,12 +102,13 @@ const LoginScreen = ({navigation}) => {
 
                     <View style={styles.bottom}>
                         <CustomButton 
-                            width='90%' 
+                            width='85%' 
                             font='Poppins' 
                             primary='#5037A9' 
                             secondary='#48319D' 
                             color='#FFFFFF' 
-                            title='Login' />
+                            title='Login'
+                            onPress={() => ValidateInputs()} />
                     </View>
                     <ExpoStatusBar style='light'/>
                 </ImageBackground>

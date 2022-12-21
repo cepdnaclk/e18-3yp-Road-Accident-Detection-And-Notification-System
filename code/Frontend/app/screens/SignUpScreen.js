@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { 
     ImageBackground, 
@@ -18,13 +18,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+import { AuthContext } from '../context/AuthContext';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const SignUpScreen = ({navigation}) => {
     
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
     
-    const [state, setState] = useState(1);
+    const [state, setState] = useState(1);  // 0 -> Ambulance, 1 -> Driver, 2 -> Emergency
     const [inputs, setInputs] = useState({
         firstname: '',
         lastname: '',
@@ -40,6 +42,7 @@ const SignUpScreen = ({navigation}) => {
         devNo: '',
     });
     const [errors, setErrors] = useState({});
+    const { isLoading, DriverRegister } = useContext(AuthContext);
 
     const clearFields = () => {
         handleOnChange('', 'firstname');
@@ -74,7 +77,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='hospital'
                         onChangeText={(text) => handleOnChange(text, 'hospital')}
-                        // error='This is an error message'
+                        value={inputs.hospital}
+                        error={errors.hospital}
+                        onFocus={() => {
+                            handleError(null, 'hospital');
+                        }}
                         />
                     <CustomInput 
                         width='90%' 
@@ -83,6 +90,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='license plate number' 
                         onChangeText={(text) => handleOnChange(text, 'licensePltNo')}
+                        value={inputs.licensePltNo}
+                        error={errors.licensePltNo}
+                        onFocus={() => {
+                            handleError(null, 'licensePltNo');
+                        }}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -92,6 +104,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='driving license' 
                         onChangeText={(text) => handleOnChange(text, 'drivingLicense')}
+                        value={inputs.drivingLicense}
+                        error={errors.drivingLicense}
+                        onFocus={() => {
+                            handleError(null, 'drivingLicense');
+                        }}
                         // error='This is an error message'
                         />
     
@@ -106,7 +123,12 @@ const SignUpScreen = ({navigation}) => {
                         iconName='hospital-box-outline'
                         iconSize={20} 
                         placeholder='vehicle type' 
-                        onChangeText={(text) => handleOnChange(text, 'vehicalType')}
+                        onChangeText={(text) => handleOnChange(text, 'vehicleType')}
+                        value={inputs.vehicleType}
+                        error={errors.vehicleType}
+                        onFocus={() => {
+                            handleError(null, 'vehicleType');
+                        }}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -199,6 +221,16 @@ const SignUpScreen = ({navigation}) => {
 
     const signUp = () => {
         // Todo
+        DriverRegister(
+            inputs.firstname, 
+            inputs.lastname, 
+            inputs.NIC, 
+            inputs.email, 
+            inputs.telephoneNo, 
+            inputs.vehicleType, 
+            inputs.licensePltNo, 
+            inputs.devNo, 
+            inputs.password,);
     }
 
     const handleError = (errorMsg, input) => {
@@ -212,6 +244,7 @@ const SignUpScreen = ({navigation}) => {
     return (
         <ScrollView>
             <View style={[styles.container, {height: height}]}>
+                <Spinner visible={isLoading} />
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
@@ -359,9 +392,9 @@ const SignUpScreen = ({navigation}) => {
                                 secondary='#48319D' 
                                 color='#FFFFFF' 
                                 title='Sign Up'
-                                // onPress={() => ValidateInputs()} />
-                                // onPress={() => navigation.navigate('DriverHome')} />
-                                onPress={() => navigation.navigate('AmbulanceHome')} />
+                                onPress={() => ValidateInputs()} />
+                                {/* // onPress={() => navigation.navigate('DriverHome')} /> */}
+                                {/* onPress={() => navigation.navigate('AmbulanceHome')} /> */}
                         </View>
                         <ExpoStatusBar style='light'/>
                     </ScrollView>
