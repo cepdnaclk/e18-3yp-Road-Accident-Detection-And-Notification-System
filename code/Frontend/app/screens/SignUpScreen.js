@@ -42,7 +42,7 @@ const SignUpScreen = ({navigation}) => {
         devNo: '',
     });
     const [errors, setErrors] = useState({});
-    const { isLoading, DriverRegister } = useContext(AuthContext);
+    const { isLoading, DriverRegister, AmbulanceRegister } = useContext(AuthContext);
 
     const clearFields = () => {
         handleOnChange('', 'firstname');
@@ -168,7 +168,7 @@ const SignUpScreen = ({navigation}) => {
         if (!deviceNoInput){
             handleError('Empty device no', 'devNo');
         } else if (deviceNoInput) {
-            handleError('Valid', 'devNo');
+            handleError('', 'devNo');
         }
     }
     
@@ -244,7 +244,11 @@ const SignUpScreen = ({navigation}) => {
 
         if (valid) {
             signUp()
-            navigation.replace('DriverHome')
+            if (state === 0) {
+                navigation.replace('AmbulanceHome');
+            } else if (state === 1) {
+                navigation.replace('DriverHome');
+            }
         }
     };
 
@@ -253,16 +257,29 @@ const SignUpScreen = ({navigation}) => {
     }
 
     const signUp = () => {
-        DriverRegister(
-            inputs.firstname, 
-            inputs.lastname, 
-            inputs.NIC, 
-            inputs.email, 
-            inputs.telephoneNo, 
-            inputs.vehicleType, 
-            inputs.licensePltNo, 
-            inputs.devNo, 
-            inputs.password,);
+        if (state === 1) {
+            DriverRegister(
+                inputs.firstname, 
+                inputs.lastname, 
+                inputs.NIC, 
+                inputs.email, 
+                inputs.telephoneNo, 
+                inputs.vehicleType, 
+                inputs.licensePltNo, 
+                inputs.devNo, 
+                inputs.password,);
+        } else if (state === 0) {
+            AmbulanceRegister(
+                inputs.firstname, 
+                inputs.lastname, 
+                inputs.NIC, 
+                inputs.email, 
+                inputs.telephoneNo, 
+                inputs.hospital, 
+                inputs.licensePltNo, 
+                inputs.devNo, 
+                inputs.password,);
+        }
     }
 
     const handleError = (errorMsg, input) => {

@@ -39,6 +39,35 @@ export const AuthProvider = ({children}) => {
         });
     };
 
+    const AmbulanceRegister = async (fname,lname,nic,email,telNum,hospital,lisencePlateNum,deviceNum,password) =>{
+        setIsLoading(true);
+
+        let body = {
+            fname, 
+            lname, 
+            nic, 
+            email, 
+            telNum, 
+            hospital, 
+            lisencePlateNum, 
+            deviceNum, 
+            password,
+        }
+        await axios
+        .post(`${BASE_URL}/ambulances`,body)
+        .then(res =>{
+            let userInfo = res.data;
+            setUserInfo(userInfo);
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            setIsLoading(false);
+            console.log(userInfo);
+        })
+        .catch(e =>{
+            console.log(`register error ${e}`);
+            setIsLoading(false);
+        });
+    };
+
     const UserLogin = async (email,password) =>{
         setIsLoading(true);
  
@@ -97,6 +126,7 @@ export const AuthProvider = ({children}) => {
                 isLoading,
                 userInfo,
                 DriverRegister,
+                AmbulanceRegister,
                 UserLogin,
                 AddEmergencyContact,
         }}>
