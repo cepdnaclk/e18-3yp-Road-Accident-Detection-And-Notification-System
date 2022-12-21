@@ -2,8 +2,8 @@ const ActiveCases = require('../models/activecasesModel');
 const asyncHandler = require('express-async-handler');
 
 const assignAmbulance = asyncHandler(async (req, res) => {
-    const activeCase = await ActiveCases.findOne({"lisencePlateNum":req.params.lisencePlateNum})
-  
+    const activeCase = await ActiveCases.findOne({"lisencePlateNum":req.body.lisencePlateNum})
+
     if (!activeCase) {
       res.status(201).json({ state: "Not Active" })
     }
