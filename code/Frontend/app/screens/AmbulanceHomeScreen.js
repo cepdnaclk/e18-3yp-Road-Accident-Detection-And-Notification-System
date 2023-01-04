@@ -1,12 +1,14 @@
-import React, { useState} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
 import CustomNavigationBar from '../components/CustomNavigationBar';
+import { AuthContext } from '../context/AuthContext';
 
 const AmbulanceImg = require('../assets/icons/ambulance_3d_left.png')
+const PatientImg = require('../assets/icons/patient.png')
 
 const mapStyle = [
     {
@@ -360,15 +362,24 @@ const mapStyle = [
 function AmbulanceHome({navigation}) {
 
     const [origin, setOrigin] = useState({
-        latitude: 6.05433,
-        longitude: 80.20042,
+        latitude: 6.12646,
+        longitude: 80.20395,
     });
 
     const [destination, setDestination] = useState({
-        latitude: 6.81739,
-        longitude: 79.95887,
+        latitude: 6.13235,
+        longitude: 80.21062,
     });
+    const [state, setState] = useState(0);
 
+    const { GetAccidentLocation } = useContext(AuthContext);
+
+    useEffect(() => {
+      setTimeout(() => {
+       setState(1);
+      }, 10000);
+    }, []);
+    
     return (
         <View style={styles.container}>
             <View style={styles.topPanel}>
@@ -393,6 +404,12 @@ function AmbulanceHome({navigation}) {
                 <Marker 
                     coordinate={origin}
                     image={AmbulanceImg}/>
+                {state == 1 && (
+                  <Marker 
+                  coordinate={destination}
+                  image={PatientImg}/>
+                )}
+                
             </MapView>
             <CustomNavigationBar />
             <ExpoStatusBar style='dark'/>

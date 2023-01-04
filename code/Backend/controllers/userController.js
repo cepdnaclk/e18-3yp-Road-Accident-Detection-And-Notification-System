@@ -78,7 +78,7 @@ const getMe = asyncHandler( async(req,res) =>{
     res.status(200).json({
         id:_id,
         name,
-        email,
+        email,     
     })
 });
 
