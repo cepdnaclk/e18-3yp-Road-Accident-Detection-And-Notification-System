@@ -1,4 +1,5 @@
 const Accident = require('../models/accidentModel');
+const ActiveCases = require('../models/activecasesModel');
 const asyncHandler = require('express-async-handler');
 
 const Ambulance = require('../models/ambulanceModel');
@@ -30,6 +31,15 @@ const addAccident =asyncHandler(async(req,res) =>{
                 }
             }
         ]);
+
+        
+        const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
+
+        const activeCases = await ActiveCases.create({
+            lisencePlateNum,
+            longitude, 
+            latitude
+        });
 
         res.status(200).send({success:true, msg:"Ambulance details", data:find_ambulances});
         return;
