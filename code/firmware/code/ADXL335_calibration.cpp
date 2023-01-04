@@ -10,10 +10,10 @@
 int xMin = 264;
 int xMax = 398;
 
-int yMin = 205;
-int yMax = 440;
+int yMin = 265;
+int yMax = 398;
 
-int zMin = 268;
+int zMin = 267;
 int zMax = 401;
 
 // Take multiple samples to reduce noise
