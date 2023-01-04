@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { 
     ImageBackground, 
@@ -18,13 +18,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+import { AuthContext } from '../context/AuthContext';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const SignUpScreen = ({navigation}) => {
     
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
     
-    const [state, setState] = useState(1);
+    const [state, setState] = useState(1);  // 0 -> Ambulance, 1 -> Driver, 2 -> Emergency
     const [inputs, setInputs] = useState({
         firstname: '',
         lastname: '',
@@ -40,6 +42,7 @@ const SignUpScreen = ({navigation}) => {
         devNo: '',
     });
     const [errors, setErrors] = useState({});
+    const { isLoading, DriverRegister, AmbulanceRegister } = useContext(AuthContext);
 
     const clearFields = () => {
         handleOnChange('', 'firstname');
@@ -74,7 +77,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='hospital'
                         onChangeText={(text) => handleOnChange(text, 'hospital')}
-                        // error='This is an error message'
+                        value={inputs.hospital}
+                        error={errors.hospital}
+                        onFocus={() => {
+                            handleError(null, 'hospital');
+                        }}
                         />
                     <CustomInput 
                         width='90%' 
@@ -83,6 +90,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='license plate number' 
                         onChangeText={(text) => handleOnChange(text, 'licensePltNo')}
+                        value={inputs.licensePltNo}
+                        error={errors.licensePltNo}
+                        onFocus={() => {
+                            handleError(null, 'licensePltNo');
+                        }}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -92,6 +104,11 @@ const SignUpScreen = ({navigation}) => {
                         iconSize={20} 
                         placeholder='driving license' 
                         onChangeText={(text) => handleOnChange(text, 'drivingLicense')}
+                        value={inputs.drivingLicense}
+                        error={errors.drivingLicense}
+                        onFocus={() => {
+                            handleError(null, 'drivingLicense');
+                        }}
                         // error='This is an error message'
                         />
     
@@ -106,7 +123,12 @@ const SignUpScreen = ({navigation}) => {
                         iconName='hospital-box-outline'
                         iconSize={20} 
                         placeholder='vehicle type' 
-                        onChangeText={(text) => handleOnChange(text, 'vehicalType')}
+                        onChangeText={(text) => handleOnChange(text, 'vehicleType')}
+                        value={inputs.vehicleType}
+                        error={errors.vehicleType}
+                        onFocus={() => {
+                            handleError(null, 'vehicleType');
+                        }}
                         // error='This is an error message'
                         />
                     <CustomInput 
@@ -146,7 +168,7 @@ const SignUpScreen = ({navigation}) => {
         if (!deviceNoInput){
             handleError('Empty device no', 'devNo');
         } else if (deviceNoInput) {
-            handleError('Valid', 'devNo');
+            handleError('', 'devNo');
         }
     }
     
@@ -162,43 +184,102 @@ const SignUpScreen = ({navigation}) => {
             handleError('Please input firstname', 'firstname');
             valid = false;
         } else if (inputs.firstname) {
-            handleError('have something', 'firstname');
+            handleError('', 'firstname');
         }
         if (!inputs.lastname) {
             handleError('Please input lastname', 'lastname');
+            valid = false;
         } else if (inputs.lastname) {
-            handleError('have something', 'lastname');
+            handleError('', 'lastname');
         }
         if (!inputs.email) {
-            handleError('Please input lastname', 'email');
-        } else if (!inputs.email.match(/\s+@\s+\.\s+/)) {
+            handleError('Please input email', 'email');
+            valid = false;
+        } else if (!isValidEmail(inputs.email)) {
             handleError('Please input valid email', 'email');
+            valid = false;
+        } else {
+            handleError('', 'email');
         }
         if (!inputs.NIC) {
-            handleError('Please input lastname', 'NIC');
+            handleError('Please input NIC number', 'NIC');
+            valid = false;
         } else if (inputs.NIC) {
-            handleError('have something', 'NIC');
+            handleError('', 'NIC');
         }
         if (!inputs.telephoneNo) {
             handleError('Please input lastname', 'telephoneNo');
-        } else if (inputs.telephoneNo) {
-            handleError('have something', 'telephoneNo');
+            valid = false;
+        } else if (inputs.telephoneNo.length < 9 || inputs.telephoneNo.length > 10) {
+            valid = false;
+            handleError('Invalid telephone Number', 'telephoneNo');
+        } else {
+            handleError('', 'telephoneNo');
         }
         if (!inputs.licensePltNo) {
             handleError('Please input lastname', 'licensePltNo');
+            valid = false;
         } else if (inputs.licensePltNo) {
-            handleError('have something', 'licensePltNo');
+            handleError('', 'licensePltNo');
         }
         ValidateDevNo(inputs.devNo)
-        // min password length 4
+
+        if (!inputs.password) {
+            handleError('Please input password', 'password');
+            valid = false;
+        } else if (inputs.password.length <= 4) {
+            handleError('Password should have at least 5 characters', 'password');
+            valid = false;
+        } else if (inputs.password && inputs.password != inputs.confPassword) {
+            handleError('Password mismatched', 'password');
+            valid = false;
+        }
+        if (!inputs.confPassword) {
+            handleError('Please input confirm password', 'confPassword');
+            valid = false;
+        } else if (inputs.confPassword.length <= 4) {
+            handleError('Password should have at least 5 characters', 'confpassword');
+            valid = false;
+        }
 
         if (valid) {
             signUp()
+            if (state === 0) {
+                navigation.replace('AmbulanceHome');
+            } else if (state === 1) {
+                navigation.replace('DriverHome');
+            }
         }
     };
 
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
     const signUp = () => {
-        // Todo
+        if (state === 1) {
+            DriverRegister(
+                inputs.firstname, 
+                inputs.lastname, 
+                inputs.NIC, 
+                inputs.email, 
+                inputs.telephoneNo, 
+                inputs.vehicleType, 
+                inputs.licensePltNo, 
+                inputs.devNo, 
+                inputs.password,);
+        } else if (state === 0) {
+            AmbulanceRegister(
+                inputs.firstname, 
+                inputs.lastname, 
+                inputs.NIC, 
+                inputs.email, 
+                inputs.telephoneNo, 
+                inputs.hospital, 
+                inputs.licensePltNo, 
+                inputs.devNo, 
+                inputs.password,);
+        }
     }
 
     const handleError = (errorMsg, input) => {
@@ -212,6 +293,7 @@ const SignUpScreen = ({navigation}) => {
     return (
         <ScrollView>
             <View style={[styles.container, {height: height}]}>
+                <Spinner visible={isLoading} />
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
@@ -336,6 +418,11 @@ const SignUpScreen = ({navigation}) => {
                                 placeholder='password'
                                 onChangeText={(text) => handleOnChange(text, 'password')}
                                 password 
+                                value={inputs.password}
+                                error={errors.password}
+                                onFocus={() => {
+                                    handleError(null, 'password');
+                                }}
                                 // error='This is an error message'
                                 />
                             <CustomInput 
@@ -346,6 +433,11 @@ const SignUpScreen = ({navigation}) => {
                                 placeholder='confirm password'
                                 onChangeText={(text) => handleOnChange(text, 'confPassword')}
                                 password
+                                value={inputs.confPassword}
+                                error={errors.confPassword}
+                                onFocus={() => {
+                                    handleError(null, 'confPassword');
+                                }}
                                 // error='This is an error message'
                                 />
 
@@ -359,9 +451,9 @@ const SignUpScreen = ({navigation}) => {
                                 secondary='#48319D' 
                                 color='#FFFFFF' 
                                 title='Sign Up'
-                                // onPress={() => ValidateInputs()} />
-                                // onPress={() => navigation.navigate('DriverHome')} />
-                                onPress={() => navigation.navigate('AmbulanceHome')} />
+                                onPress={() => ValidateInputs()} />
+                                {/* // onPress={() => navigation.navigate('DriverHome')} /> */}
+                                {/* onPress={() => navigation.navigate('AmbulanceHome')} /> */}
                         </View>
                         <ExpoStatusBar style='light'/>
                     </ScrollView>
