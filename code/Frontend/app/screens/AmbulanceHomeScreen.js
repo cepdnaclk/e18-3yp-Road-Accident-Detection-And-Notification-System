@@ -3,6 +3,8 @@ import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-nati
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { SwipeButton } from 'react-native-expo-swipe-button';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import CustomNavigationBar from '../components/CustomNavigationBar';
 import { AuthContext } from '../context/AuthContext';
@@ -411,6 +413,27 @@ function AmbulanceHome({navigation}) {
                 )}
                 
             </MapView>
+            <View style={styles.bottom}>
+              <SwipeButton
+                Icon={
+                  <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
+                }
+                circleSize={50}
+                onComplete={() => {console.log('Success!')}}
+                containerStyle={{
+                  backgroundColor: 'rgba(90, 93, 125, 0.9)',
+                  
+                  borderWidth: 0,
+                  borderColor: 'red',
+                }}
+                title="Swipe to complete"
+                titleStyle={{ color: 'white' }}
+                borderRadius={180}
+                //containerStyle={{ backgroundColor: '#5A5D7D' }}
+                underlayTitle="Release to complete"
+                underlayTitleStyle={{ color: 'white' }}
+              />
+            </View>
             <CustomNavigationBar />
             <ExpoStatusBar style='dark'/>
         </View>
@@ -440,6 +463,12 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
+    bottom: {
+      position: 'absolute',
+      zIndex: 10,
+      bottom: 100,
+      // backgroundColor: '#000000',
+    }
 })
 
 export default AmbulanceHome;
