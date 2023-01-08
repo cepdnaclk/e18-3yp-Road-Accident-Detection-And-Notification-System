@@ -78,10 +78,10 @@ export const AuthProvider = ({children}) => {
         console.log(body);
 
         await axios
-        .post(`${BASE_URL}/drivers/login`,body)
+        .post(`${BASE_URL}/ambulances/login`,body)
         .then(res =>{
             let userInfo = res.data;
-            console.log(userInfo);
+            console.log(userInfo+ ' \n -----Here') ;
             setUserInfo(userInfo);
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
@@ -120,6 +120,24 @@ export const AuthProvider = ({children}) => {
         // });
     };
 
+    const GetAccidentLocation = async (lisencePlateNum) =>{
+
+        let body = { 
+            lisencePlateNum,
+        }
+        await axios
+        .post(`${BASE_URL}/ambulances/findaccident`,body)
+        .then(res =>{
+            let userInfo = res.data;
+            setUserInfo(userInfo);
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            console.log(userInfo);
+        })
+        .catch(e =>{
+            console.log(`register error ${e}`);
+        });
+    };
+
     return (
         <AuthContext.Provider 
             value={{
@@ -129,6 +147,7 @@ export const AuthProvider = ({children}) => {
                 AmbulanceRegister,
                 UserLogin,
                 AddEmergencyContact,
+                GetAccidentLocation,
         }}>
             {children}
         </AuthContext.Provider>

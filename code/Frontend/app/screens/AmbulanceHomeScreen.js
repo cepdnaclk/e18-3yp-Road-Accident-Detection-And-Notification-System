@@ -1,12 +1,17 @@
-import React, { useState} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { SwipeButton } from 'react-native-expo-swipe-button';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 
 import CustomNavigationBar from '../components/CustomNavigationBar';
+import { AuthContext } from '../context/AuthContext';
 
 const AmbulanceImg = require('../assets/icons/ambulance_3d_left.png')
+const PatientImg = require('../assets/icons/patient.png')
 
 const mapStyle = [
     {
@@ -360,15 +365,32 @@ const mapStyle = [
 function AmbulanceHome({navigation}) {
 
     const [origin, setOrigin] = useState({
-        latitude: 6.05433,
-        longitude: 80.20042,
+        latitude: 6.12646,
+        longitude: 80.20395,
     });
 
     const [destination, setDestination] = useState({
-        latitude: 6.81739,
-        longitude: 79.95887,
+        latitude: 6.13235,
+        longitude: 80.21062,
+    });
+    const [state, setState] = useState(0);
+
+    const [fontsLoaded] = useFonts({
+      'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
     });
 
+    const { GetAccidentLocation } = useContext(AuthContext);
+
+    useEffect(() => {
+      setTimeout(() => {
+       setState(1);
+      }, 10000);
+    }, []);
+
+    if (!fontsLoaded) {
+      return null;
+    }
+    
     return (
         <View style={styles.container}>
             <View style={styles.topPanel}>
@@ -393,9 +415,35 @@ function AmbulanceHome({navigation}) {
                 <Marker 
                     coordinate={origin}
                     image={AmbulanceImg}/>
+                {state == 1 && (
+                  <Marker 
+                  coordinate={destination}
+                  image={PatientImg}/>
+                )}
+                
             </MapView>
+            <View style={styles.bottom}>
+              <SwipeButton
+                Icon={
+                  <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
+                }
+                height= {74}
+                width= {280}
+                circleSize={73}
+                circleBackgroundColor='#2B2A46'
+                onComplete={() => {console.log('Success!')}}
+                containerStyle={{
+                  backgroundColor: 'rgba(90, 93, 125, 0.8)',
+                }}
+                title="Slide to pick the patient"
+                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18 }}
+                borderRadius={180}
+                underlayTitle="Release to complete"
+                underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
+              />
+            </View>
             <CustomNavigationBar />
-            <ExpoStatusBar style='dark'/>
+            <ExpoStatusBar style='light'/>
         </View>
     );
 }
@@ -411,7 +459,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
         height: '8%',
         width: '95%',
-        backgroundColor: 'rgba(90, 93, 125, 0.3)',
+        backgroundColor: 'rgba(90, 93, 125, 0.55)',
         borderRadius: 15,
         top: StatusBar.currentHeight,
         flexDirection: 'row',
@@ -423,6 +471,12 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
+    bottom: {
+      position: 'absolute',
+      zIndex: 10,
+      bottom: 100,
+      // backgroundColor: '#000000',
+    }
 })
 
 export default AmbulanceHome;
