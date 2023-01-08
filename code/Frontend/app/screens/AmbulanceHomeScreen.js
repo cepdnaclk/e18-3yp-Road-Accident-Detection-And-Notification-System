@@ -5,6 +5,7 @@ import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { SwipeButton } from 'react-native-expo-swipe-button';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 
 import CustomNavigationBar from '../components/CustomNavigationBar';
 import { AuthContext } from '../context/AuthContext';
@@ -374,6 +375,10 @@ function AmbulanceHome({navigation}) {
     });
     const [state, setState] = useState(0);
 
+    const [fontsLoaded] = useFonts({
+      'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
+    });
+
     const { GetAccidentLocation } = useContext(AuthContext);
 
     useEffect(() => {
@@ -381,6 +386,10 @@ function AmbulanceHome({navigation}) {
        setState(1);
       }, 10000);
     }, []);
+
+    if (!fontsLoaded) {
+      return null;
+    }
     
     return (
         <View style={styles.container}>
@@ -418,24 +427,23 @@ function AmbulanceHome({navigation}) {
                 Icon={
                   <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
                 }
-                circleSize={50}
+                height= {74}
+                width= {280}
+                circleSize={73}
+                circleBackgroundColor='#2B2A46'
                 onComplete={() => {console.log('Success!')}}
                 containerStyle={{
-                  backgroundColor: 'rgba(90, 93, 125, 0.9)',
-                  
-                  borderWidth: 0,
-                  borderColor: 'red',
+                  backgroundColor: 'rgba(90, 93, 125, 0.8)',
                 }}
-                title="Swipe to complete"
-                titleStyle={{ color: 'white' }}
+                title="Slide to pick the patient"
+                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18 }}
                 borderRadius={180}
-                //containerStyle={{ backgroundColor: '#5A5D7D' }}
                 underlayTitle="Release to complete"
-                underlayTitleStyle={{ color: 'white' }}
+                underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
               />
             </View>
             <CustomNavigationBar />
-            <ExpoStatusBar style='dark'/>
+            <ExpoStatusBar style='light'/>
         </View>
     );
 }
@@ -451,7 +459,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
         height: '8%',
         width: '95%',
-        backgroundColor: 'rgba(90, 93, 125, 0.3)',
+        backgroundColor: 'rgba(90, 93, 125, 0.55)',
         borderRadius: 15,
         top: StatusBar.currentHeight,
         flexDirection: 'row',
