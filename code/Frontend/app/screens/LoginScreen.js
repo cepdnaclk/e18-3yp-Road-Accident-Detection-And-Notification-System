@@ -60,7 +60,7 @@ const LoginScreen = ({navigation}) => {
 
     const LogIn = () => {
         UserLogin(inputs.email, inputs.password);
-        navigation.replace('DriverHome')
+        // navigation.replace('DriverHome')
     }
 
     const handleError = (errorMsg, input) => {

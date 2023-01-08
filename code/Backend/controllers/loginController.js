@@ -28,6 +28,7 @@ const login =asyncHandler( async(req,res) =>{
             deviceNum:driver.deviceNum,
             emergency: driver.emergency,
             token:generateToken(driver._id),
+            userState: 1,
         })
     } else if(ambulance &&(await bcrypt.compare(password, ambulance.password))){
         res.json({
@@ -40,6 +41,7 @@ const login =asyncHandler( async(req,res) =>{
             hospital:ambulance.hospital,
             lisencePlateNum:ambulance.lisencePlateNum,
             token:generateToken(ambulance._id),
+            userState: 0,
         })
     } else if(emergencyContact &&(await bcrypt.compare(password, emergencyContact.password))){
         res.status(200).json({
@@ -50,6 +52,7 @@ const login =asyncHandler( async(req,res) =>{
             email:emergencyContact.email,
             telNum:emergencyContact.telNum,
             token:generateToken(emergencyContact._id),
+            userState: 2,
         })
     }
     else{

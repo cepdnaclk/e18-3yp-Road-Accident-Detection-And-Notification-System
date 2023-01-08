@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [userState, setUserState] = useState(1);
 
     const DriverRegister = async (fname,lname,nic,email,telNum,vehicleType,lisencePlateNum,deviceNum,password) =>{
         setIsLoading(true);
@@ -29,9 +30,10 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
+            setUserState(1);
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
-            console.log(userInfo);
+            // console.log(userInfo);
         })
         .catch(e =>{
             console.log(`register error ${e}`);
@@ -58,9 +60,37 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
+            setUserState(0);
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
-            console.log(userInfo);
+            // console.log(JSON.stringify(userInfo));
+        })
+        .catch(e =>{
+            console.log(`register error ${e}`);
+            setIsLoading(false);
+        });
+    };
+
+    const EmergencyRegister = async (fname,lname,nic,email,telNum,password) =>{
+        setIsLoading(true);
+
+        let body = {
+            fname, 
+            lname, 
+            nic, 
+            email, 
+            telNum,
+            password,
+        }
+        await axios
+        .post(`${BASE_URL}/emergencycontacts`,body)
+        .then(res =>{
+            let userInfo = res.data;
+            setUserInfo(userInfo);
+            setUserState(2);
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            setIsLoading(false);
+            // console.log(JSON.stringify(userInfo));
         })
         .catch(e =>{
             console.log(`register error ${e}`);
@@ -78,13 +108,13 @@ export const AuthProvider = ({children}) => {
         console.log(body);
 
         await axios
-        .post(`${BASE_URL}/ambulances/login`,body)
+        .post(`${BASE_URL}/login`,body)
         .then(res =>{
             let userInfo = res.data;
-            console.log(userInfo+ ' \n -----Here') ;
             setUserInfo(userInfo);
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
+            console.log(JSON.stringify(userInfo)) ;
         })
         .catch(e =>{
             console.log(`Login error ${e}`);
@@ -145,6 +175,7 @@ export const AuthProvider = ({children}) => {
                 userInfo,
                 DriverRegister,
                 AmbulanceRegister,
+                EmergencyRegister,
                 UserLogin,
                 AddEmergencyContact,
                 GetAccidentLocation,
