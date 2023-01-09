@@ -18,7 +18,7 @@ const StartupScreen = ({navigation}) => {
         ) : userInfo.userState === 1 ? (
             navigation.replace('DriverHome')
         ) : userInfo.userState === 2 ? (
-            navigation.replace('DriverHome')
+            navigation.replace('EmergencyHome')
         ) : (
             navigation.replace('Welcome')
         )}

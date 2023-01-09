@@ -8,6 +8,7 @@ import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import DriverHomeScreen from '../screens/DriverHomeScreen';
 import AmbulanceHomeScreen from '../screens/AmbulanceHomeScreen';
+import EmergencyHomeScreen from '../screens/EmergencyHomeScreen';
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -26,7 +27,7 @@ function Navigation(props) {
           ) : userInfo.userState === 1 ? (
             <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
           ) : userInfo.userState === 2 ? (
-            <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
+            <Stack.Screen name='EmergencyHome' component={EmergencyHomeScreen}/>
           ) : (
             <Stack.Screen name='Welcome' component={WelcomeScreen}/>
           )) : (
@@ -36,19 +37,6 @@ function Navigation(props) {
               <Stack.Screen name='SignUp' component={SignUpScreen}/>
             </>
           )}
-
-        {/* {userInfo.token ? (
-          <>
-            <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
-            <Stack.Screen name='AmbulanceHome' component={AmbulanceHomeScreen}/>
-          </>
-        ) : (
-          <>
-            <Stack.Screen name='Welcome' component={WelcomeScreen}/>
-            <Stack.Screen name='Login' component={LoginScreen}/>
-            <Stack.Screen name='SignUp' component={SignUpScreen}/>
-          </>
-        )}  */}
           
         </Stack.Navigator>
       </NavigationContainer>
