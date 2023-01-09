@@ -170,6 +170,7 @@ const DriverHomeScreen = ({navigation}) => {
                 </ImageBackground>
             </View>
             <CustomNavigationBar />
+            <ExpoStatusBar style='light'/>
         </>
         // </ScrollView>
     );
