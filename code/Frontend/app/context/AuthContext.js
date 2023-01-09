@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 import { BASE_URL } from "../../config";
 
@@ -9,6 +9,22 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        loadUserInfo()
+    }, [])
+
+    const loadUserInfo = async () => {
+        try {
+          const value = await AsyncStorage.getItem('userInfo');
+          if (value !== null) { 
+            setUserInfo(JSON.parse(value))
+            console.log(userInfo.token);
+          }
+        } catch (error) {
+            console.log('no previous data');
+        }
+    };
 
     const DriverRegister = async (fname,lname,nic,email,telNum,vehicleType,lisencePlateNum,deviceNum,password) =>{
         setIsLoading(true);

@@ -396,7 +396,8 @@ function AmbulanceHome({navigation}) {
             <View style={styles.topPanel}>
                 <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
                 <TouchableOpacity 
-                    onPress={() => navigation.navigate('Welcome')}
+                    // onPress={() => navigation.navigate('Welcome')}
+                    onPress={() => console.log('back-ambulance')}
                     style={styles.back}>
 
                     <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
