@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useContext, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet } from 'react-native';
 
+import { AuthContext } from '../context/AuthContext';
+
 const StartupScreen = ({navigation}) => {
+    const { userInfo } = useContext(AuthContext);
+
+    useEffect(() => {
+        console.log('state - ' + userInfo.userState)
+    }, [userInfo.userState])
+
     setTimeout(() => {
-        navigation.replace('Welcome')
+        { userInfo.userState === 0 ? (
+            navigation.replace('AmbulanceHome')
+        ) : userInfo.userState === 1 ? (
+            navigation.replace('DriverHome')
+        ) : userInfo.userState === 2 ? (
+            navigation.replace('EmergencyHome')
+        ) : (
+            navigation.replace('Welcome')
+        )}
     }, 2500)
 
     return (

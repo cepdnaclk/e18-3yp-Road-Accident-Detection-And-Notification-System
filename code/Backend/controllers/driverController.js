@@ -45,6 +45,7 @@ const registerDriver =asyncHandler(async(req,res) =>{
             lisencePlateNum:driver.lisencePlateNum,
             deviceNum:driver.deviceNum,
             token:generateToken(driver._id),
+            userState: 1,
         })
     }else{
         res.status(400)

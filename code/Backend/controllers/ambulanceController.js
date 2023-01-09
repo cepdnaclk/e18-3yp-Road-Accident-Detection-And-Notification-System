@@ -45,6 +45,7 @@ const registerAmbulance =asyncHandler(async(req,res) =>{
             lisencePlateNum:ambulance.lisencePlateNum,
             hospital:ambulance.hospital,
             token:generateToken(ambulance._id),
+            userState: 0,
         })
     }else{
         res.status(400)

@@ -42,7 +42,7 @@ const SignUpScreen = ({navigation}) => {
         devNo: '',
     });
     const [errors, setErrors] = useState({});
-    const { isLoading, DriverRegister, AmbulanceRegister } = useContext(AuthContext);
+    const { isLoading, DriverRegister, AmbulanceRegister, EmergencyRegister } = useContext(AuthContext);
 
     const clearFields = () => {
         handleOnChange('', 'firstname');
@@ -216,13 +216,22 @@ const SignUpScreen = ({navigation}) => {
         } else {
             handleError('', 'telephoneNo');
         }
-        if (!inputs.licensePltNo) {
-            handleError('Please input lastname', 'licensePltNo');
-            valid = false;
-        } else if (inputs.licensePltNo) {
-            handleError('', 'licensePltNo');
+        if (state === 0){
+            if (!inputs.licensePltNo) {
+                handleError('Please input lastname', 'licensePltNo');
+                valid = false;
+            } else if (inputs.licensePltNo) {
+                handleError('', 'licensePltNo');
+            }
+        } else if (state === 1){
+            if (!inputs.licensePltNo) {
+                handleError('Please input lastname', 'licensePltNo');
+                valid = false;
+            } else if (inputs.licensePltNo) {
+                handleError('', 'licensePltNo');
+            }
+            ValidateDevNo(inputs.devNo)
         }
-        ValidateDevNo(inputs.devNo)
 
         if (!inputs.password) {
             handleError('Please input password', 'password');
@@ -244,11 +253,13 @@ const SignUpScreen = ({navigation}) => {
 
         if (valid) {
             signUp()
-            if (state === 0) {
-                navigation.replace('AmbulanceHome');
-            } else if (state === 1) {
-                navigation.replace('DriverHome');
-            }
+            // if (state === 0) {
+            //     navigation.replace('AmbulanceHome');
+            // } else if (state === 1) {
+            //     navigation.replace('DriverHome');
+            // } else if (state === 2) {
+            //     navigation.replace('Welcome');
+            // }
         }
     };
 
@@ -279,6 +290,14 @@ const SignUpScreen = ({navigation}) => {
                 inputs.licensePltNo, 
                 inputs.devNo, 
                 inputs.password,);
+        } else if (state === 2) {
+            EmergencyRegister(
+                inputs.firstname, 
+                inputs.lastname, 
+                inputs.NIC, 
+                inputs.email, 
+                inputs.telephoneNo, 
+                inputs.password,);
         }
     }
 
@@ -297,7 +316,7 @@ const SignUpScreen = ({navigation}) => {
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
-                            onPress={() => navigation.navigate('Welcome')}
+                            onPress={() => {console.log('here');/*navigation.navigate('Welcome')*/}}
                             style={styles.back}>
 
                             <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />

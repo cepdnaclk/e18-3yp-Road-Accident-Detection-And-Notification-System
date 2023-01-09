@@ -175,194 +175,7 @@ const mapStyle = [
     }
   ]
 
-// const mapStyle = [
-//     {
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#212121"
-//         }
-//       ]
-//     },
-//     {
-//       "elementType": "labels.icon",
-//       "stylers": [
-//         {
-//           "visibility": "off"
-//         }
-//       ]
-//     },
-//     {
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#757575"
-//         }
-//       ]
-//     },
-//     {
-//       "elementType": "labels.text.stroke",
-//       "stylers": [
-//         {
-//           "color": "#212121"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "administrative",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#757575"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "administrative.country",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#9e9e9e"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "administrative.land_parcel",
-//       "stylers": [
-//         {
-//           "visibility": "off"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "administrative.locality",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#bdbdbd"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "poi",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#757575"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "poi.park",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#181818"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "poi.park",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#616161"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "poi.park",
-//       "elementType": "labels.text.stroke",
-//       "stylers": [
-//         {
-//           "color": "#1b1b1b"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road",
-//       "elementType": "geometry.fill",
-//       "stylers": [
-//         {
-//           "color": "#2c2c2c"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#8a8a8a"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road.arterial",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#373737"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road.highway",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#3c3c3c"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road.highway.controlled_access",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#4e4e4e"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "road.local",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#616161"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "transit",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#757575"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "water",
-//       "elementType": "geometry",
-//       "stylers": [
-//         {
-//           "color": "#000000"
-//         }
-//       ]
-//     },
-//     {
-//       "featureType": "water",
-//       "elementType": "labels.text.fill",
-//       "stylers": [
-//         {
-//           "color": "#3d3d3d"
-//         }
-//       ]
-//     }
-//   ]
-
-function AmbulanceHome({navigation}) {
+function EmergencyHome({navigation}) {
 
     const [origin, setOrigin] = useState({
         latitude: 6.12646,
@@ -373,19 +186,12 @@ function AmbulanceHome({navigation}) {
         latitude: 6.13235,
         longitude: 80.21062,
     });
-    const [state, setState] = useState(0);
 
     const [fontsLoaded] = useFonts({
       'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
     });
 
     const { GetAccidentLocation } = useContext(AuthContext);
-
-    useEffect(() => {
-      setTimeout(() => {
-       setState(1);
-      }, 10000);
-    }, []);
 
     if (!fontsLoaded) {
       return null;
@@ -394,10 +200,10 @@ function AmbulanceHome({navigation}) {
     return (
         <View style={styles.container}>
             <View style={styles.topPanel}>
-                <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
+                <Image style={{marginTop: 6}} source={require('../assets/img/LogoEmergency.png')} />
                 <TouchableOpacity 
                     // onPress={() => navigation.navigate('Welcome')}
-                    onPress={() => console.log('back-ambulance')}
+                    onPress={() => console.log('back-emergency')}
                     style={styles.back}>
 
                     <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
@@ -416,11 +222,11 @@ function AmbulanceHome({navigation}) {
                 <Marker 
                     coordinate={origin}
                     image={AmbulanceImg}/>
-                {state == 1 && (
+                {/* {state == 1 && (
                   <Marker 
                   coordinate={destination}
                   image={PatientImg}/>
-                )}
+                )} */}
                 
             </MapView>
             <View style={styles.bottom}>
@@ -480,4 +286,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AmbulanceHome;
+export default EmergencyHome;

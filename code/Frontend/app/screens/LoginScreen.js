@@ -20,8 +20,7 @@ const LoginScreen = ({navigation}) => {
         password: '',
     });
     const [errors, setErrors] = useState({});
-    const { isLoading, UserLogin } = useContext(AuthContext);  
-    const { userInfo } = useContext(AuthContext);
+    const { isLoading, userInfo, UserLogin } = useContext(AuthContext);
 
     const handleOnChange = (text, input) => {
         setInputs(prevState => ({...prevState, [input]: text}));
@@ -60,7 +59,7 @@ const LoginScreen = ({navigation}) => {
 
     const LogIn = () => {
         UserLogin(inputs.email, inputs.password);
-        navigation.replace('DriverHome')
+        // navigation.replace('DriverHome')
     }
 
     const handleError = (errorMsg, input) => {
