@@ -82,7 +82,7 @@ void setup()
     // turn on the backlight
     lcd.backlight();
     lcd.clear();
-    lcd.setCursor(4, 0);
+    lcd.setCursor(0, 0);
     lcd.print("PROTEGO");
     delay(5000);
     init_gps();
@@ -128,7 +128,6 @@ void setup()
  *****************************************************************************************/
 void loop()
 {
-    lcd.clear();
     //--------------------------------------------------------------
     // call impact routine every 2mS
     if (micros() - time1 > 1999)
@@ -239,230 +238,227 @@ void Impact()
 
 void init_gps()
 {
-    lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print("Connecting GPS");
-    lcd.setCursor(0, 1);
-
-    for (int i = 0; i < 16; i++)
+    while (neogps.available() > 0)
     {
-        lcd.print(".");
-        delay(200);
-    }
 
-    while (true)
-    {
-        while (neogps.available() > 0)
+        lcd.clear();
+        lcd.setCursor(0, 1);
+        lcd.print("Connecting GPS");
+        lcd.setCursor(1, 0);
+
+        if (gps.encode(neogps.read()))
         {
-            if (gps.encode(neogps.read()))
-            {
-                
-                if (gps.location.isValid())
-                {
-                    // Serial.print(gps.location.lat(), 6);
-                    // Serial.print(F(","));
-                    // Serial.print(gps.location.lng(), 6);
-                    // Serial.println();
 
-                    lcd.clear();
-                    lcd.setCursor(1, 0);
-                    lcd.print("GPS Connected");
-                    delay(5000);
-                    return;
-                }
+            for (int i = 0; i < 16; i++)
+            {
+                lcd.print(".");
+                delay(100);
+            }
+
+            if (gps.location.isValid())
+            {
+
+                Serial.print(gps.location.lat(), 6);
+                Serial.print(F(","));
+                Serial.print(gps.location.lng(), 6);
+
+                lcd.clear();
+                lcd.setCursor(0, 1);
+                lcd.print("GPS Connected");
+                delay(5000);
+                return;
             }
         }
-    }
 
-    if (millis() > 5000 && gps.charsProcessed() < 10)
-    {
-        // lcd.print("NO GPS : Check Wiring");
-        Serial.println(F("No GPS detected: check wiring."));
-        while (true)
-            ;
+        if (millis() > 5000 && gps.charsProcessed() < 10)
+        {
+            lcd.print("NO GPS : Check Wiring");
+            Serial.println(F("No GPS detected: check wiring."));
+            while (true);
+        }
     }
 }
-/*****************************************************************************************
- * parseData() function
- *****************************************************************************************/
-void parseData(String buff)
-{
-    Serial.println(buff);
-
-    unsigned int len, index;
-    //--------------------------------------------------------------
-    // Remove sent "AT Command" from the response string.
-    index = buff.indexOf("\r");
-    buff.remove(0, index + 2);
-    buff.trim();
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    if (buff != "OK")
+    /*****************************************************************************************
+     * parseData() function
+     *****************************************************************************************/
+    void parseData(String buff)
     {
-        //--------------------------------------------------------------
-        index = buff.indexOf(":");
-        String cmd = buff.substring(0, index);
-        cmd.trim();
+        Serial.println(buff);
 
+        unsigned int len, index;
+        //--------------------------------------------------------------
+        // Remove sent "AT Command" from the response string.
+        index = buff.indexOf("\r");
         buff.remove(0, index + 2);
-        // Serial.println(buff);
-        //--------------------------------------------------------------
-        if (cmd == "+CMTI")
+        buff.trim();
+        // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        if (buff != "OK")
         {
-            // get newly arrived memory location and store it in temp
-            // temp = 4
-            index = buff.indexOf(",");
-            String temp = buff.substring(index + 1, buff.length());
-            temp = "AT+CMGR=" + temp + "\r";
-            // AT+CMGR=4 i.e. get message stored at memory location 4
-            sim800.println(temp);
-        }
-        //--------------------------------------------------------------
-        else if (cmd == "+CMGR")
-        {
-            // extractSms(buff);
-            // Serial.println(buff.indexOf(EMERGENCY_PHONE));
-            if (buff.indexOf(EMERGENCY_PHONE) > 1)
-            {
-                buff.toLowerCase();
-                // Serial.println(buff.indexOf("get gps"));
-                if (buff.indexOf("get gps") > 1)
-                {
-                    getGps();
-                    String sms_data;
-                    sms_data = "GPS Location Data\r";
-                    sms_data += "http://maps.google.com/maps?q=loc:";
-                    sms_data += latitude + "," + longitude;
+            //--------------------------------------------------------------
+            index = buff.indexOf(":");
+            String cmd = buff.substring(0, index);
+            cmd.trim();
 
-                    sendSms(sms_data);
+            buff.remove(0, index + 2);
+            // Serial.println(buff);
+            //--------------------------------------------------------------
+            if (cmd == "+CMTI")
+            {
+                // get newly arrived memory location and store it in temp
+                // temp = 4
+                index = buff.indexOf(",");
+                String temp = buff.substring(index + 1, buff.length());
+                temp = "AT+CMGR=" + temp + "\r";
+                // AT+CMGR=4 i.e. get message stored at memory location 4
+                sim800.println(temp);
+            }
+            //--------------------------------------------------------------
+            else if (cmd == "+CMGR")
+            {
+                // extractSms(buff);
+                // Serial.println(buff.indexOf(EMERGENCY_PHONE));
+                if (buff.indexOf(EMERGENCY_PHONE) > 1)
+                {
+                    buff.toLowerCase();
+                    // Serial.println(buff.indexOf("get gps"));
+                    if (buff.indexOf("get gps") > 1)
+                    {
+                        getGps();
+                        String sms_data;
+                        sms_data = "GPS Location Data\r";
+                        sms_data += "http://maps.google.com/maps?q=loc:";
+                        sms_data += latitude + "," + longitude;
+
+                        sendSms(sms_data);
+                    }
+                }
+            }
+            //--------------------------------------------------------------
+        }
+        else
+        {
+            // The result of AT Command is "OK"
+        }
+        // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    }
+
+    /*****************************************************************************************
+     * getGps() Function
+     *****************************************************************************************/
+    void getGps()
+    {
+        // Can take up to 60 seconds
+        boolean newData = false;
+        for (unsigned long start = millis(); millis() - start < 2000;)
+        {
+            while (neogps.available())
+            {
+                if (gps.encode(neogps.read()))
+                {
+                    newData = true;
+                    break;
                 }
             }
         }
-        //--------------------------------------------------------------
-    }
-    else
-    {
-        // The result of AT Command is "OK"
-    }
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-}
 
-/*****************************************************************************************
- * getGps() Function
- *****************************************************************************************/
-void getGps()
-{
-    // Can take up to 60 seconds
-    boolean newData = false;
-    for (unsigned long start = millis(); millis() - start < 2000;)
-    {
-        while (neogps.available())
+        if (newData) // If newData is true
         {
-            if (gps.encode(neogps.read()))
-            {
-                newData = true;
-                break;
-            }
+            latitude = String(gps.location.lat(), 6);
+            longitude = String(gps.location.lng(), 6);
+            newData = false;
         }
-    }
-
-    if (newData) // If newData is true
-    {
-        latitude = String(gps.location.lat(), 6);
-        longitude = String(gps.location.lng(), 6);
-        newData = false;
-    }
-    else
-    {
-        Serial.println("No GPS data is available");
-        latitude = "";
-        longitude = "";
-    }
-
-    Serial.print("Latitude= ");
-    Serial.println(latitude);
-    Serial.print("Lngitude= ");
-    Serial.println(longitude);
-}
-
-/*****************************************************************************************
- * sendAlert() function
- *****************************************************************************************/
-void sendAlert()
-{
-    String sms_data;
-    sms_data = "Accident Alert!!\r";
-    sms_data += "http://maps.google.com/maps?q=loc:";
-    sms_data += latitude + "," + longitude;
-
-    sendSms(sms_data);
-}
-
-/*****************************************************************************************
- * makeCall() function
- *****************************************************************************************/
-void makeCall()
-{
-    Serial.println("calling....");
-    sim800.println("ATD" + EMERGENCY_PHONE + ";");
-    delay(20000); // 20 sec delay
-    sim800.println("ATH");
-    delay(1000); // 1 sec delay
-}
-
-/*****************************************************************************************
- * sendSms() function
- *****************************************************************************************/
-void sendSms(String text)
-{
-    // return;
-    sim800.print("AT+CMGF=1\r");
-    delay(1000);
-    sim800.print("AT+CMGS=\"" + EMERGENCY_PHONE + "\"\r");
-    delay(1000);
-    sim800.print(text);
-    delay(100);
-    sim800.write(0x1A); // ascii code for ctrl-26 //sim800.println((char)26); //ascii code for ctrl-26
-    delay(1000);
-    Serial.println("SMS Sent Successfully.");
-}
-
-/*****************************************************************************************
- * SendAT() function
- *****************************************************************************************/
-boolean SendAT(String at_command, String expected_answer, unsigned int timeout)
-{
-
-    uint8_t x = 0;
-    boolean answer = 0;
-    String response;
-    unsigned long previous;
-
-    // Clean the input buffer
-    while (sim800.available() > 0)
-        sim800.read();
-
-    sim800.println(at_command);
-
-    x = 0;
-    previous = millis();
-
-    // this loop waits for the answer with time out
-    do
-    {
-        // if there are data in the UART input buffer, reads it and checks for the asnwer
-        if (sim800.available() != 0)
+        else
         {
-            response += sim800.read();
-            x++;
-            // check if the desired answer (OK) is in the response of the module
-            if (response.indexOf(expected_answer) > 0)
-            {
-                answer = 1;
-                break;
-            }
+            Serial.println("No GPS data is available");
+            latitude = "";
+            longitude = "";
         }
-    } while ((answer == 0) && ((millis() - previous) < timeout));
 
-    Serial.println(response);
-    return answer;
-}
+        Serial.print("Latitude= ");
+        Serial.println(latitude);
+        Serial.print("Lngitude= ");
+        Serial.println(longitude);
+    }
+
+    /*****************************************************************************************
+     * sendAlert() function
+     *****************************************************************************************/
+    void sendAlert()
+    {
+        String sms_data;
+        sms_data = "Accident Alert!!\r";
+        sms_data += "http://maps.google.com/maps?q=loc:";
+        sms_data += latitude + "," + longitude;
+
+        sendSms(sms_data);
+    }
+
+    /*****************************************************************************************
+     * makeCall() function
+     *****************************************************************************************/
+    void makeCall()
+    {
+        Serial.println("calling....");
+        sim800.println("ATD" + EMERGENCY_PHONE + ";");
+        delay(20000); // 20 sec delay
+        sim800.println("ATH");
+        delay(1000); // 1 sec delay
+    }
+
+    /*****************************************************************************************
+     * sendSms() function
+     *****************************************************************************************/
+    void sendSms(String text)
+    {
+        // return;
+        sim800.print("AT+CMGF=1\r");
+        delay(1000);
+        sim800.print("AT+CMGS=\"" + EMERGENCY_PHONE + "\"\r");
+        delay(1000);
+        sim800.print(text);
+        delay(100);
+        sim800.write(0x1A); // ascii code for ctrl-26 //sim800.println((char)26); //ascii code for ctrl-26
+        delay(1000);
+        Serial.println("SMS Sent Successfully.");
+    }
+
+    /*****************************************************************************************
+     * SendAT() function
+     *****************************************************************************************/
+    boolean SendAT(String at_command, String expected_answer, unsigned int timeout)
+    {
+
+        uint8_t x = 0;
+        boolean answer = 0;
+        String response;
+        unsigned long previous;
+
+        // Clean the input buffer
+        while (sim800.available() > 0)
+            sim800.read();
+
+        sim800.println(at_command);
+
+        x = 0;
+        previous = millis();
+
+        // this loop waits for the answer with time out
+        do
+        {
+            // if there are data in the UART input buffer, reads it and checks for the asnwer
+            if (sim800.available() != 0)
+            {
+                response += sim800.read();
+                x++;
+                // check if the desired answer (OK) is in the response of the module
+                if (response.indexOf(expected_answer) > 0)
+                {
+                    answer = 1;
+                    break;
+                }
+            }
+        } while ((answer == 0) && ((millis() - previous) < timeout));
+
+        Serial.println(response);
+        return answer;
+    }
