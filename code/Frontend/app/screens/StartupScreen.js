@@ -6,18 +6,18 @@ import { Image, StyleSheet } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
 const StartupScreen = ({navigation}) => {
-    const { userState } = useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
 
     useEffect(() => {
-        console.log('state - ' + userState)
-    }, [userState])
+        console.log('state - ' + userInfo.userState)
+    }, [userInfo.userState])
 
     setTimeout(() => {
-        { userState === 0 ? (
+        { userInfo.userState === 0 ? (
             navigation.replace('AmbulanceHome')
-        ) : userState === 1 ? (
+        ) : userInfo.userState === 1 ? (
             navigation.replace('DriverHome')
-        ) : userState === 2 ? (
+        ) : userInfo.userState === 2 ? (
             navigation.replace('DriverHome')
         ) : (
             navigation.replace('Welcome')

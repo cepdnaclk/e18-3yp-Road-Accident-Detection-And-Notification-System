@@ -41,6 +41,7 @@ const registerEmergencyContact =asyncHandler(async(req,res) =>{
             email:emergencyContact.email,
             telNum:emergencyContact.telNum,
             token:generateToken(emergencyContact._id),
+            userState: 2,
         })
     }else{
         res.status(400)

@@ -13,7 +13,7 @@ import { AuthContext } from '../context/AuthContext';
 const Stack = createNativeStackNavigator();
 
 function Navigation(props) {
-    const { userInfo, userState } = useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
 
     return (
         <NavigationContainer>
@@ -21,11 +21,11 @@ function Navigation(props) {
         <Stack.Screen name='StartUp' component={StartupScreen}/>
 
         {userInfo.token ? (
-          userState === 0 ? (
+          userInfo.userState === 0 ? (
             <Stack.Screen name='AmbulanceHome' component={AmbulanceHomeScreen}/>
-          ) : userState === 1 ? (
+          ) : userInfo.userState === 1 ? (
             <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
-          ) : userState === 2 ? (
+          ) : userInfo.userState === 2 ? (
             <Stack.Screen name='DriverHome' component={DriverHomeScreen}/>
           ) : (
             <Stack.Screen name='Welcome' component={WelcomeScreen}/>
