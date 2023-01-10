@@ -30,7 +30,6 @@ TinyGPSPlus gps;
 #define GREEN_BUTTON 5
 #define BLUE_BUTTON 6
 #define RED_BUTTON 7
-#define BUZZER 10
 //--------------------------------------------------------------
 
 const String APN = "mobitel"; // hutch3g // dialogbb // mobitel
@@ -40,26 +39,7 @@ String latitude = "6.05433";
 String longitude = "80.20042";
 String activeState = "accident";
 
-int xaxis = 0, yaxis = 0, zaxis = 0;
-int deltx = 0, delty = 0, deltz = 0;
-int vibration = 2, devibrate = 75;
-int magnitude = 0;
-int sensitivity = 80;
-double angle;
-byte updateflag;
-String critical_level = "";
-
-boolean impact_detected = false;
-// Used to run impact routine every 2mS.
-unsigned long time1;
-unsigned long impact_time;
-unsigned long alert_delay = 30000; // 30 seconds
-//--------------------------------------------------------------
-
 // Function prototypes
-void Impact();
-void criticalLevel();
-void getGps();
 void init_gps();
 void init_gsm();
 void gprs_connect();
@@ -82,7 +62,7 @@ void setup()
     // Serial.println("NEO6M serial initialize");
     neogps.begin(9600);
     //--------------------------------------------------------------
-    pinMode(BUZZER, OUTPUT);
+    // pinMode(BUZZER, OUTPUT);
     pinMode(GREEN_BUTTON, INPUT);
     pinMode(BLUE_BUTTON, INPUT);
     pinMode(RED_BUTTON, INPUT);
@@ -136,9 +116,9 @@ void setup()
     //   //read calibrated values. otherwise false impact will trigger
     //   //when you reset your Arduino. (By pressing reset button)
 
-    xaxis = analogRead(xPin);
-    yaxis = analogRead(yPin);
-    zaxis = analogRead(zPin);
+    // xaxis = analogRead(xPin);
+    // yaxis = analogRead(yPin);
+    // zaxis = analogRead(zPin);
     //--------------------------------------------------------------
 }
 
@@ -147,201 +127,18 @@ void setup()
  *****************************************************************************************/
 void loop()
 {
-
-    //--------------------------------------------------------------
-    //  call impact routine every 2mS
-    if (micros() - time1 > 1999)
-        Impact();
-    //--------------------------------------------------------------
-    if (updateflag > 0)
+    if (digitalRead(GREEN_BUTTON) == HIGH)
     {
-        updateflag = 0;
-        digitalWrite(BUZZER, HIGH);
-
-        Serial.println("Impact detected!!");
-        Serial.print("Magnitude:");
-        Serial.println(magnitude);
-
-        lcd.clear();
-        lcd.setCursor(0, 0); // col=0 row=0
-        lcd.print("Crash Detected");
-        lcd.setCursor(0, 1); // col=0 row=1
-        lcd.print("Magnitude:" + String(magnitude));
-        delay(5000);
-
-        lcd.clear();
-        lcd.setCursor(2, 0);
-        lcd.print("Update your");
-        lcd.setCursor(1, 1);
-        lcd.print("Critical Level");
-
-        getGps();
-        criticalLevel();
-
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("CRITICAL LEVEL");
-        lcd.setCursor(0, 1);
-        lcd.print(critical_level);
-
-        // digitalWrite(BUZZER, HIGH);
-        impact_detected = true;
-        impact_time = millis();
+        Serial.println("Green Pressed");
     }
-    //--------------------------------------------------------------
-    if (impact_detected == true)
+    else if (digitalRead(BLUE_BUTTON) == HIGH)
     {
-        if (millis() - impact_time >= alert_delay)
-        {
-            // digitalWrite(BUZZER, LOW);
-            // makeCall();
-            // delay(1000);
-            // sendAlert();
-            impact_detected = false;
-            impact_time = 0;
-        }
+        Serial.println("Blue Pressed");
     }
-
-    // if (digitalRead(BUTTON) == LOW)
-    // {
-    //     delay(200);
-    //     digitalWrite(BUZZER, LOW);
-    //     impact_detected = false;
-    //     impact_time = 0;
-    // }
-    //--------------------------------------------------------------
-    // while (SIM800.available())
-    // {
-    //     parseData(SIM800.readString());
-    // }
-    //--------------------------------------------------------------
-    // while (Serial.available())
-    // {
-    //     SIM800.println(Serial.readString());
-    // }
-    //--------------------------------------------------------------
-}
-
-/*****************************************************************************************
- * Impact() function
- *****************************************************************************************/
-void Impact()
-{
-    //--------------------------------------------------------------
-    time1 = micros(); // resets time value
-    //--------------------------------------------------------------
-    int oldx = xaxis; // store previous axis readings for comparison
-    int oldy = yaxis;
-    int oldz = zaxis;
-
-    xaxis = analogRead(xPin);
-    yaxis = analogRead(yPin);
-    zaxis = analogRead(zPin);
-
-    //--------------------------------------------------------------
-    // loop counter prevents false triggering. Vibration resets if there is an impact. Don't detect new changes until that "time" has passed.
-    vibration--;
-    // Serial.print("Vibration = "); Serial.println(vibration);
-    if (vibration < 0)
-        vibration = 0;
-    // Serial.println("Vibration Reset!");
-
-    if (vibration > 0)
-        return;
-    //--------------------------------------------------------------
-    deltx = xaxis - oldx;
-    delty = yaxis - oldy;
-    deltz = zaxis - oldz;
-
-    // Magnitude to calculate force of impact.
-    magnitude = sqrt(sq(deltx) + sq(delty) + sq(deltz));
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    if (magnitude >= sensitivity) // impact detected
+    else if (digitalRead(RED_BUTTON) == HIGH)
     {
-        updateflag = 1;
-        // reset anti-vibration counter
-        vibration = devibrate;
+        Serial.println("Red Pressed");
     }
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    else
-    {
-        // if (magnitude > 15)
-        // Serial.println(magnitude);
-        // reset magnitude of impact to 0
-        magnitude = 0;
-    }
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-}
-
-/*****************************************************************************************
- * getGps() Function
- *****************************************************************************************/
-void getGps()
-{
-    // Can take up to 60 seconds
-    boolean newData = false;
-    for (unsigned long start = millis(); millis() - start < 2000;)
-    {
-        while (neogps.available())
-        {
-            if (gps.encode(neogps.read()))
-            {
-                newData = true;
-                break;
-            }
-        }
-    }
-
-    if (newData) // If newData is true
-    {
-        latitude = String(gps.location.lat(), 6);
-        longitude = String(gps.location.lng(), 6);
-        newData = false;
-    }
-    else
-    {
-        Serial.println("No GPS data is available");
-        latitude = "";
-        longitude = "";
-    }
-
-    Serial.print("Latitude= ");
-    Serial.println(latitude);
-    Serial.print("Logitude= ");
-    Serial.println(longitude);
-}
-
-/*****************************************************************************************
- *criticalLevel() Function
- *****************************************************************************************/
-void criticalLevel()
-{
-    for (unsigned long start = millis(); millis() - start < 5000;)
-    {
-        if (digitalRead(GREEN_BUTTON) == HIGH)
-        {
-            critical_level = "GREEN";
-            Serial.println("GREEN");
-            digitalWrite(BUZZER, LOW);
-            return;
-        }
-        else if (digitalRead(BLUE_BUTTON) == HIGH)
-        {
-            critical_level = "BLUE";
-            Serial.println("BLUE");
-            digitalWrite(BUZZER, LOW);
-            return;
-        }
-        else if (digitalRead(RED_BUTTON) == HIGH)
-        {
-            critical_level = "RED";
-            Serial.println("RED");
-            digitalWrite(BUZZER, LOW);
-            return;
-        }
-    }
-    critical_level = "RED";
-    digitalWrite(BUZZER, LOW);
 }
 
 void init_gps()
