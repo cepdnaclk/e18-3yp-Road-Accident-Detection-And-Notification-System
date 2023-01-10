@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { 
     ImageBackground, 
@@ -29,6 +29,13 @@ const renderItem = ({ item }) => (
 );
 
 const DriverHomeScreen = ({navigation}) => {
+
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         console.log('repeated')
+    //     }, 5000);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     const [visible, setVisible] = useState(false);
     const [list, setList] = useState(ProfilePic);
@@ -169,7 +176,7 @@ const DriverHomeScreen = ({navigation}) => {
                     </View>
                 </ImageBackground>
             </View>
-            <CustomNavigationBar />
+            {/* <CustomNavigationBar /> */}
             <ExpoStatusBar style='light'/>
         </>
         // </ScrollView>

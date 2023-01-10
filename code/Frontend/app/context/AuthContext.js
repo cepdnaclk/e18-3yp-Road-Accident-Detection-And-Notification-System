@@ -19,7 +19,6 @@ export const AuthProvider = ({children}) => {
           const value = await AsyncStorage.getItem('userInfo');
           if (value !== null) { 
             setUserInfo(JSON.parse(value))
-            console.log(userInfo.token);
           }
         } catch (error) {
             console.log('no previous data');

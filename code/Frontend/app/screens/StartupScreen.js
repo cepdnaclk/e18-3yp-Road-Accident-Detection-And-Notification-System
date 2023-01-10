@@ -12,18 +12,6 @@ const StartupScreen = ({navigation}) => {
         console.log('state - ' + userInfo.userState)
     }, [userInfo.userState])
 
-    setTimeout(() => {
-        { userInfo.userState === 0 ? (
-            navigation.replace('AmbulanceHome')
-        ) : userInfo.userState === 1 ? (
-            navigation.replace('DriverHome')
-        ) : userInfo.userState === 2 ? (
-            navigation.replace('EmergencyHome')
-        ) : (
-            navigation.replace('Welcome')
-        )}
-    }, 2500)
-
     return (
         <LinearGradient 
             style={styles.container}
