@@ -12,6 +12,8 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         loadUserInfo()
+        console.log(userInfo.emergency);
+        // userInfo.emergency.map(e => console.log(e))
     }, [])
 
     const loadUserInfo = async () => {
@@ -133,6 +135,31 @@ export const AuthProvider = ({children}) => {
         });
     };
 
+    const Logout = () => {
+        setIsLoading(true)
+
+        // await axios
+        // .post(`${BASE_URL}/logout`,
+        // {},
+        // {
+        //     headers: {Authorization: `Bearer ${userInfo.token}`}
+        // })
+        // .then(res =>{
+        //     console.log(res.data)
+        //     AsyncStorage.removeItem('userInfo');
+        //     setUserInfo({});
+        //     setIsLoading(false);
+        // })
+        // .catch(e =>{
+        //     console.log(`Logout error ${e}`);
+        //     setIsLoading(false);
+        // });
+        AsyncStorage.removeItem('userInfo');
+        setUserInfo({});
+        setIsLoading(false);
+
+    }
+
     const AddEmergencyContact = async (fname,lname,telNo) =>{
 
         let body ={
@@ -188,6 +215,7 @@ export const AuthProvider = ({children}) => {
                 AmbulanceRegister,
                 EmergencyRegister,
                 UserLogin,
+                Logout,
                 AddEmergencyContact,
                 GetAccidentLocation,
         }}>
