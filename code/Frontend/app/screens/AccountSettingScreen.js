@@ -1,19 +1,31 @@
-import React, { useContext } from 'react';
-import { View, Text } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { AuthContext } from '../context/AuthContext';
 
 function AccountSettingScreen(props) {
-    const { userInfo, Logout } = useContext(AuthContext);
+    const { isLoading, userInfo, Logout } = useContext(AuthContext);
+
+    // useEffect(() => {
+    //     console.log(userInfo)
+    // }, [])
+
+    function callLogout () {
+        Logout()
+    }
 
     return (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{marginBottom: 30}}>
+        <View style={{flex: 1, backgroundColor: '#2E335A', alignItems: 'center', justifyContent: 'center'}}>
+            <Spinner visible={isLoading} />
+            <Text style={{marginBottom: 30, color: '#DBDBDB', fontSize: 16}}>
                 Account Setting screen
             </Text>
-            <Text style={{backgroundColor: 'gray', padding: 6, borderRadius: 8}} onPress={() => {Logout}}>
-                Sign out Account
-            </Text>
+            <TouchableOpacity onPress={() => { callLogout() }}>
+                <Text style={{backgroundColor: '#5037A9', color: 'white', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8}} >
+                    Sign out Account
+                </Text>
+            </TouchableOpacity>
 
         </View>
     );

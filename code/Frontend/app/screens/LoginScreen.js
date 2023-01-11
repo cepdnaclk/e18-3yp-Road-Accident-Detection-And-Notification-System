@@ -4,11 +4,11 @@ import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity, 
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import { AuthContext } from '../context/AuthContext';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 const LoginScreen = ({navigation}) => {
 

@@ -11,15 +11,15 @@ export const AuthProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        // loadUserInfo()
+        loadUserInfo()
         // const arr = [1, 2, 3, 4, 9, 8];
         // arr.map(e => console.log(e));
-        console.log(JSON.stringify(userInfo))
-        if (Object.keys(userInfo).length) {
-            console.log(userInfo.emergency);
-            userInfo.emergency.map(e => console.log(e))
-        }
-    }, [])
+        // console.log(JSON.stringify(userInfo))
+        // if (Object.keys(userInfo).length) {
+        //     console.log(userInfo.emergency);
+        //     userInfo.emergency.map(e => console.log(e))
+        // }
+    }, [userInfo])
 
     const loadUserInfo = async () => {
         try {
@@ -140,7 +140,7 @@ export const AuthProvider = ({children}) => {
         });
     };
 
-    const Logout = () => {
+    const Logout = async () => {
         setIsLoading(true)
 
         // await axios
@@ -159,9 +159,10 @@ export const AuthProvider = ({children}) => {
         //     console.log(`Logout error ${e}`);
         //     setIsLoading(false);
         // });
-        AsyncStorage.removeItem('userInfo');
+        await AsyncStorage.removeItem('userInfo');
         setUserInfo({});
         setIsLoading(false);
+        console.log('End');
 
     }
 
