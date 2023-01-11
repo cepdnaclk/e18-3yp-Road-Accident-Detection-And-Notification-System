@@ -162,7 +162,6 @@ export const AuthProvider = ({children}) => {
         await AsyncStorage.removeItem('userInfo');
         setUserInfo({});
         setIsLoading(false);
-        console.log('End');
 
     }
 
@@ -178,6 +177,20 @@ export const AuthProvider = ({children}) => {
                 } else {
                     res += s.charAt(i).toLowerCase()
                 }
+            }
+            res += ' '
+        })
+        return res.trim()
+    };
+
+    function toCamelCase(str){
+        let res = ''
+        const WordArray =  str.split(' ')
+            .map(element => element.trim())
+            .filter(element => element !== '');
+        WordArray.map(s => {
+            for (let i = 0; i < s.length; i++) {
+                res += s.charAt(i).toUpperCase()
             }
             res += ' '
         })
@@ -244,6 +257,7 @@ export const AuthProvider = ({children}) => {
                 UserLogin,
                 Logout,
                 toTitleCase,
+                toCamelCase,
                 AddEmergencyContact,
                 GetAccidentLocation,
         }}>

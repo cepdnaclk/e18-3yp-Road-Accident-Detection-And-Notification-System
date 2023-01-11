@@ -7,9 +7,9 @@ import { AuthContext } from '../context/AuthContext';
 function AccountSettingScreen(props) {
     const { isLoading, userInfo, Logout } = useContext(AuthContext);
 
-    // useEffect(() => {
-    //     console.log(userInfo)
-    // }, [])
+    useEffect(() => {
+        console.log(userInfo)
+    }, [])
 
     function callLogout () {
         Logout()
