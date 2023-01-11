@@ -5,6 +5,7 @@
 #include <AltSoftSerial.h>
 #include <math.h>
 #include <Wire.h>
+// #include <ArduinoJson.h>
 
 #define DELAY_MS 5000
 
@@ -41,11 +42,9 @@ String longitude = "80.20042";
 String activeState = "accident";
 
 int xaxis = 0, yaxis = 0, zaxis = 0;
-int deltx = 0, delty = 0, deltz = 0;
-int vibration = 2, devibrate = 75;
+int vibration = 10, devibrate = 150;
 int magnitude = 0;
-int sensitivity = 80;
-double angle;
+int sensitivity = 120;
 byte updateflag;
 String critical_level = "";
 
@@ -56,6 +55,8 @@ unsigned long impact_time;
 unsigned long alert_delay = 30000; // 30 seconds
 //--------------------------------------------------------------
 
+// StaticJsonBuffer<200> jsonBuffer;
+
 // Function prototypes
 void Impact();
 void criticalLevel();
@@ -63,6 +64,7 @@ void getGps();
 void init_gps();
 void init_gsm();
 void gprs_connect();
+void sendToServer(String data);
 boolean gprs_disconnect();
 boolean is_gprs_connected();
 boolean waitResponse(String expected_answer = "OK", unsigned int timeout = 2000);
@@ -88,6 +90,8 @@ void setup()
     pinMode(RED_BUTTON, INPUT);
     //--------------------------------------------------------------
 
+    // DynamicJsonBuffer jsonBuffer;
+
     lcd.init();
     lcd.backlight();
     lcd.clear();
@@ -102,7 +106,7 @@ void setup()
         gprs_connect();
     }
 
-    init_gps();
+    // init_gps();
 
     lcd.clear();
 
@@ -171,7 +175,7 @@ void loop()
 
         lcd.clear();
         lcd.setCursor(2, 0);
-        lcd.print("Update your");
+        lcd.print("Update Your");
         lcd.setCursor(1, 1);
         lcd.print("Critical Level");
 
@@ -179,28 +183,51 @@ void loop()
         criticalLevel();
 
         lcd.clear();
-        lcd.setCursor(0, 0);
+        lcd.setCursor(1, 0);
         lcd.print("CRITICAL LEVEL");
         lcd.setCursor(0, 1);
         lcd.print(critical_level);
 
-        // digitalWrite(BUZZER, HIGH);
         impact_detected = true;
         impact_time = millis();
     }
-    //--------------------------------------------------------------
-    if (impact_detected == true)
+
+    if (critical_level == "RED")
     {
-        if (millis() - impact_time >= alert_delay)
-        {
-            // digitalWrite(BUZZER, LOW);
-            // makeCall();
-            // delay(1000);
-            // sendAlert();
-            impact_detected = false;
-            impact_time = 0;
-        }
+        // StaticJsonBuffer<200> jsonBuffer;
+        // JsonObject &object = jsonBuffer.createObject();
+
+        // object.set("longitude", longitude);
+        // object.set("latitude", latitude);
+        // object.set("deviceNum", deviceID);
+        // object.set("activeState", activeState);
+
+        // object.printTo(Serial);
+        // Serial.println(" ");
+        String sendtoserver_data;
+        sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
+        // object.prettyPrintTo(sendtoserver_data);
+        Serial.println(sendtoserver_data);
+        // while (true)
+        // {
+        //     sendToServer(sendtoserver_data);
+        // }
+
+        // delay(4000);
     }
+    //--------------------------------------------------------------
+    // if (impact_detected == true)
+    // {
+    //     if (millis() - impact_time >= alert_delay)
+    //     {
+    //         // digitalWrite(BUZZER, LOW);
+    //         // makeCall();
+    //         // delay(1000);
+    //         // sendAlert();
+    //         impact_detected = false;
+    //         impact_time = 0;
+    //     }
+    // }
 
     // if (digitalRead(BUTTON) == LOW)
     // {
@@ -249,12 +276,9 @@ void Impact()
     if (vibration > 0)
         return;
     //--------------------------------------------------------------
-    deltx = xaxis - oldx;
-    delty = yaxis - oldy;
-    deltz = zaxis - oldz;
 
     // Magnitude to calculate force of impact.
-    magnitude = sqrt(sq(deltx) + sq(delty) + sq(deltz));
+    magnitude = sqrt(sq(xaxis - oldx) + sq(yaxis - oldy) + sq(zaxis - oldz));
     // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
     if (magnitude >= sensitivity) // impact detected
     {
@@ -271,6 +295,58 @@ void Impact()
         magnitude = 0;
     }
     // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+}
+
+void sendToServer(String data)
+{
+    while (!is_gprs_connected())
+    {
+        gprs_connect();
+    }
+
+    SIM800.println("AT+HTTPINIT");
+    delay(6000);
+    waitResponse();
+
+    SIM800.println("AT+HTTPPARA=\"CID\",1");
+    delay(6000);
+    waitResponse();
+
+    SIM800.println("AT+HTTPINIT");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"CID\",1");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"URL\",\"http://192.168.137.1:5000/api/accident\""); // Server address
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"CONTENT\",\"application/json\"");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPDATA=" + String(data.length()) + ",100000");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println(data);
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPACTION=1");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPREAD");
+    waitResponse("OK");
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPTERM");
+    waitResponse("OK", 1000);
+    delay(DELAY_MS);
 }
 
 /*****************************************************************************************
@@ -312,7 +388,7 @@ void getGps()
 }
 
 /*****************************************************************************************
- *criticalLevel() Function
+ * criticalLevel() Function
  *****************************************************************************************/
 void criticalLevel()
 {
@@ -344,6 +420,9 @@ void criticalLevel()
     digitalWrite(BUZZER, LOW);
 }
 
+/*****************************************************************************************
+ * init_gps() function
+ *****************************************************************************************/
 void init_gps()
 {
     lcd.clear();
@@ -389,6 +468,9 @@ void init_gps()
     }
 }
 
+/*****************************************************************************************
+ * init_gsm() function
+ *****************************************************************************************/
 void init_gsm()
 {
     lcd.clear();
@@ -429,6 +511,9 @@ void init_gsm()
     delay(3000);
 }
 
+/*****************************************************************************************
+ * gprs_connect() function
+ *****************************************************************************************/
 void gprs_connect()
 {
 
@@ -479,6 +564,9 @@ void gprs_connect()
     }
 }
 
+/*****************************************************************************************
+ * is_gprs_connected() function
+ *****************************************************************************************/
 boolean is_gprs_connected()
 {
     SIM800.println("AT+SAPBR=2,1");
@@ -490,6 +578,9 @@ boolean is_gprs_connected()
     return true;
 }
 
+/*****************************************************************************************
+ * gprs_disconnect() function
+ *****************************************************************************************/
 boolean gprs_disconnect()
 {
     // Disconnect GPRS
@@ -505,6 +596,9 @@ boolean gprs_disconnect()
     return true;
 }
 
+/*****************************************************************************************
+ * waitResponse() function
+ *****************************************************************************************/
 boolean waitResponse(String expected_answer, unsigned int timeout)
 {
     uint8_t x = 0, answer = 0;
