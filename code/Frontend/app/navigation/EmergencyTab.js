@@ -1,12 +1,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import AmbulanceHome from '../screens/AmbulanceHomeScreen';
+import EmergencyHome from '../screens/EmergencyHomeScreen';
 import AccountSettingScreen from "../screens/AccountSettingScreen";
 
 const Tab = createBottomTabNavigator();
 
-function AmbulanceTabs() {
+function EmergencyTab() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -47,7 +47,7 @@ function AmbulanceTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={AmbulanceHome}
+        component={EmergencyHome}
         options={{
             tabBarLabel: 'Home',
             tabBarIcon: ({ focused, color, size }) => {
@@ -83,4 +83,4 @@ function AmbulanceTabs() {
   );
 }
 
-export default AmbulanceTabs;
+export default EmergencyTab;

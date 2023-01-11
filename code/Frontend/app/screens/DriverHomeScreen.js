@@ -21,7 +21,6 @@ import ProfilePic from '../assets/profPic/ProfilePic';
 import ModalPopUp from '../components/ModalPopUp';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import CustomNavigationBar from '../components/CustomNavigationBar';
 import { AuthContext } from '../context/AuthContext';
 
 const renderItem = ({ item }) => (

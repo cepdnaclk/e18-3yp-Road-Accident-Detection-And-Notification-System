@@ -11,7 +11,7 @@ export const AuthProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        loadUserInfo()
+        // loadUserInfo()
         // const arr = [1, 2, 3, 4, 9, 8];
         // arr.map(e => console.log(e));
         console.log(JSON.stringify(userInfo))
