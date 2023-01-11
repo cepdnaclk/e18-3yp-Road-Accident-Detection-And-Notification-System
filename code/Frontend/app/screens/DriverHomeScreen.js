@@ -45,7 +45,7 @@ const DriverHomeScreen = ({navigation}) => {
         tpNo: '',
     });
 
-    const { AddEmergencyContact } = useContext(AuthContext);
+    const { AddEmergencyContact, toTitleCase } = useContext(AuthContext);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -130,9 +130,14 @@ const DriverHomeScreen = ({navigation}) => {
                             color='#DBDBDB' 
                             title='Add Contact'
                             onPress={() => {
-                                const name = modalInputs.fname + ' ' + modalInputs.lname;
+                                const name = toTitleCase(modalInputs.fname) + ' ' + toTitleCase(modalInputs.lname);
                                 addContact(name, modalInputs.tpNo);
                                 AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
+                                setModalInputs({
+                                    fname: '',
+                                    lname: '',
+                                    tpNo: '',
+                                })
                                 setVisible(false);
                             }} />
                         <CustomButton 

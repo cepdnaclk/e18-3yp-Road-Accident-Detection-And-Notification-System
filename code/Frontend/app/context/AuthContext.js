@@ -12,8 +12,13 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         loadUserInfo()
-        console.log(userInfo.emergency);
-        // userInfo.emergency.map(e => console.log(e))
+        // const arr = [1, 2, 3, 4, 9, 8];
+        // arr.map(e => console.log(e));
+        console.log(JSON.stringify(userInfo))
+        if (Object.keys(userInfo).length) {
+            console.log(userInfo.emergency);
+            userInfo.emergency.map(e => console.log(e))
+        }
     }, [])
 
     const loadUserInfo = async () => {
@@ -160,32 +165,53 @@ export const AuthProvider = ({children}) => {
 
     }
 
+    function toTitleCase(str){
+        let res = ''
+        const WordArray =  str.split(' ')
+            .map(element => element.trim())
+            .filter(element => element !== '');
+        WordArray.map(s => {
+            for (let i = 0; i < s.length; i++) {
+                if (i === 0) {
+                    res += s.charAt(0).toUpperCase()
+                } else {
+                    res += s.charAt(i).toLowerCase()
+                }
+            }
+            res += ' '
+        })
+        return res.trim()
+    };
+
     const AddEmergencyContact = async (fname,lname,telNo) =>{
 
         let body ={
             emergency: {
-                name: fname + ' ' + lname,
+                name: toTitleCase(fname) + ' ' + toTitleCase(lname),
                 phoneNum: telNo
             }
         }
-        console.log(userInfo.token);
-        console.log(body);
-        // const header ={
-        //     headers: {Authorization: `Bearer ${userInfo.token}`},
-        // }
-        // console.log(body);
+        const token = userInfo.token;
+        console.log(token)
+        // console.log(userInfo.token);
+        // console.log(JSON.stringify(body));
+        const header ={
+            headers: {Authorization: `Bearer ${userInfo.token}`},
+        }
 
-        // await axios
-        // .put(`${BASE_URL}/drivers/addemergency`,body,header)
-        // .then(res =>{
-        //     let userInfo = res.data;
-        //     console.log(userInfo);
-        //     setUserInfo(userInfo);
-        //     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        // })
-        // .catch(e =>{
-        //     console.log(`Login error ${e}`);
-        // });
+        await axios
+        .put(`${BASE_URL}/drivers/addemergency`,JSON.stringify(body),JSON.stringify(header))
+        .then(res =>{
+            let userInfo = JSON.stringify(res.data);
+            console.log(userInfo);
+            userInfo["token"] = token;
+            console.log(userInfo);
+            setUserInfo(userInfo);
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        })
+        .catch(e =>{
+            console.log(`Login error ${e}`);
+        });
     };
 
     const GetAccidentLocation = async (lisencePlateNum) =>{
@@ -216,6 +242,7 @@ export const AuthProvider = ({children}) => {
                 EmergencyRegister,
                 UserLogin,
                 Logout,
+                toTitleCase,
                 AddEmergencyContact,
                 GetAccidentLocation,
         }}>
