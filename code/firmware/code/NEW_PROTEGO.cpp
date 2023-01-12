@@ -5,6 +5,7 @@
 #include <AltSoftSerial.h>
 #include <math.h>
 #include <Wire.h>
+// #include <ArduinoJson.h>
 
 #define DELAY_MS 5000
 
@@ -30,6 +31,7 @@ TinyGPSPlus gps;
 #define GREEN_BUTTON 5
 #define BLUE_BUTTON 6
 #define RED_BUTTON 7
+#define BUZZER 10
 //--------------------------------------------------------------
 
 const String APN = "mobitel"; // hutch3g // dialogbb // mobitel
@@ -39,10 +41,30 @@ String latitude = "6.05433";
 String longitude = "80.20042";
 String activeState = "accident";
 
+int xaxis = 0, yaxis = 0, zaxis = 0;
+int vibration = 10, devibrate = 150;
+int magnitude = 0;
+int sensitivity = 120;
+byte updateflag;
+String critical_level = "";
+
+boolean impact_detected = false;
+// Used to run impact routine every 2mS.
+unsigned long time1;
+unsigned long impact_time;
+unsigned long alert_delay = 30000; // 30 seconds
+//--------------------------------------------------------------
+
+// StaticJsonBuffer<200> jsonBuffer;
+
 // Function prototypes
+void Impact();
+void criticalLevel();
+void getGps();
 void init_gps();
 void init_gsm();
 void gprs_connect();
+void sendToServer(String data);
 boolean gprs_disconnect();
 boolean is_gprs_connected();
 boolean waitResponse(String expected_answer = "OK", unsigned int timeout = 2000);
@@ -62,11 +84,13 @@ void setup()
     // Serial.println("NEO6M serial initialize");
     neogps.begin(9600);
     //--------------------------------------------------------------
-    // pinMode(BUZZER, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
     pinMode(GREEN_BUTTON, INPUT);
     pinMode(BLUE_BUTTON, INPUT);
     pinMode(RED_BUTTON, INPUT);
     //--------------------------------------------------------------
+
+    // DynamicJsonBuffer jsonBuffer;
 
     lcd.init();
     lcd.backlight();
@@ -82,9 +106,10 @@ void setup()
         gprs_connect();
     }
 
-    init_gps();
+    // init_gps();
 
     lcd.clear();
+    time1 = micros();
 
     //--------------------------------------------------------------
     // sms_status = "";
@@ -110,15 +135,15 @@ void setup()
     //   //SendAT("AT+CNMI=1,1,0,0,0", "OK", 2000); //set sms received format
     //   //AT +CNMI = 2,1,0,0,0 - AT +CNMI = 2,2,0,0,0 (both are same)
     //   //--------------------------------------------------------------
-    //   time1 = micros();
+
     //   //Serial.print("time1 = "); Serial.println(time1);
     //   //--------------------------------------------------------------
     //   //read calibrated values. otherwise false impact will trigger
     //   //when you reset your Arduino. (By pressing reset button)
 
-    // xaxis = analogRead(xPin);
-    // yaxis = analogRead(yPin);
-    // zaxis = analogRead(zPin);
+    xaxis = analogRead(xPin);
+    yaxis = analogRead(yPin);
+    zaxis = analogRead(zPin);
     //--------------------------------------------------------------
 }
 
@@ -127,20 +152,285 @@ void setup()
  *****************************************************************************************/
 void loop()
 {
-    if (digitalRead(GREEN_BUTTON) == HIGH)
+
+    //--------------------------------------------------------------
+    //  call impact routine every 2mS
+    if (micros() - time1 > 1999)
+        Impact();
+    //--------------------------------------------------------------
+    if (updateflag > 0)
     {
-        Serial.println("Green Pressed");
+        updateflag = 0;
+        digitalWrite(BUZZER, HIGH);
+
+        Serial.println("Impact detected!!");
+        Serial.print("Magnitude:");
+        Serial.println(magnitude);
+
+        lcd.clear();
+        lcd.setCursor(0, 0); // col=0 row=0
+        lcd.print("Crash Detected");
+        lcd.setCursor(0, 1); // col=0 row=1
+        lcd.print("Magnitude:" + String(magnitude));
+        delay(5000);
+
+        lcd.clear();
+        lcd.setCursor(2, 0);
+        lcd.print("Update Your");
+        lcd.setCursor(1, 1);
+        lcd.print("Critical Level");
+
+        // getGps();
+        criticalLevel();
+
+        lcd.clear();
+        lcd.setCursor(1, 0);
+        lcd.print("CRITICAL LEVEL");
+        lcd.setCursor(0, 1);
+        lcd.print(critical_level);
+
+        impact_detected = true;
+        impact_time = millis();
     }
-    else if (digitalRead(BLUE_BUTTON) == HIGH)
+
+    if (critical_level == "RED")
     {
-        Serial.println("Blue Pressed");
+        // StaticJsonBuffer<200> jsonBuffer;
+        // JsonObject &object = jsonBuffer.createObject();
+
+        // object.set("longitude", longitude);
+        // object.set("latitude", latitude);
+        // object.set("deviceNum", deviceID);
+        // object.set("activeState", activeState);
+
+        // object.printTo(Serial);
+        // Serial.println(" ");
+        String sendtoserver_data;
+        sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
+        // object.prettyPrintTo(sendtoserver_data);
+        Serial.println(sendtoserver_data);
+
+        while (true)
+        {
+            if (!is_gprs_connected())
+            {
+                gprs_connect();
+
+                sendToServer(sendtoserver_data);
+            }
+
+            // delay(4000);
+        }
     }
-    else if (digitalRead(RED_BUTTON) == HIGH)
-    {
-        Serial.println("Red Pressed");
-    }
+
+    //--------------------------------------------------------------
+    // if (impact_detected == true)
+    // {
+    //     if (millis() - impact_time >= alert_delay)
+    //     {
+    //         // digitalWrite(BUZZER, LOW);
+    //         // makeCall();
+    //         // delay(1000);
+    //         // sendAlert();
+    //         impact_detected = false;
+    //         impact_time = 0;
+    //     }
+    // }
+
+    // if (digitalRead(BUTTON) == LOW)
+    // {
+    //     delay(200);
+    //     digitalWrite(BUZZER, LOW);
+    //     impact_detected = false;
+    //     impact_time = 0;
+    // }
+    //--------------------------------------------------------------
+    // while (SIM800.available())
+    // {
+    //     parseData(SIM800.readString());
+    // }
+    //--------------------------------------------------------------
+    // while (Serial.available())
+    // {
+    //     SIM800.println(Serial.readString());
+    // }
+    //--------------------------------------------------------------
 }
 
+/*****************************************************************************************
+ * Impact() function
+ *****************************************************************************************/
+void Impact()
+{
+    //--------------------------------------------------------------
+    time1 = micros(); // resets time value
+    //--------------------------------------------------------------
+    int oldx = xaxis; // store previous axis readings for comparison
+    int oldy = yaxis;
+    int oldz = zaxis;
+
+    xaxis = analogRead(xPin);
+    yaxis = analogRead(yPin);
+    zaxis = analogRead(zPin);
+
+    //--------------------------------------------------------------
+    // loop counter prevents false triggering. Vibration resets if there is an impact. Don't detect new changes until that "time" has passed.
+    vibration--;
+    // Serial.print("Vibration = "); Serial.println(vibration);
+    if (vibration < 0)
+        vibration = 0;
+    // Serial.println("Vibration Reset!");
+
+    if (vibration > 0)
+        return;
+    //--------------------------------------------------------------
+
+    // Magnitude to calculate force of impact.
+    magnitude = sqrt(sq(xaxis - oldx) + sq(yaxis - oldy) + sq(zaxis - oldz));
+    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    if (magnitude >= sensitivity) // impact detected
+    {
+        updateflag = 1;
+        // reset anti-vibration counter
+        vibration = devibrate;
+    }
+    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    else
+    {
+        // if (magnitude > 15)
+        // Serial.println(magnitude);
+        // reset magnitude of impact to 0
+        magnitude = 0;
+    }
+    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+}
+
+void sendToServer(String data)
+{
+    while (!is_gprs_connected())
+    {
+        gprs_connect();
+    }
+
+    SIM800.println("AT+HTTPINIT");
+    delay(6000);
+    waitResponse();
+
+    SIM800.println("AT+HTTPPARA=\"CID\",1");
+    delay(6000);
+    waitResponse();
+
+    SIM800.println("AT+HTTPINIT");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"CID\",1");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"URL\",\"http://192.168.137.1:5000/api/accident\""); // Server address
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPPARA=\"CONTENT\",\"application/json\"");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPDATA=" + String(data.length()) + ",100000");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println(data);
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPACTION=1");
+    waitResponse();
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPREAD");
+    waitResponse("OK");
+    delay(DELAY_MS);
+
+    SIM800.println("AT+HTTPTERM");
+    waitResponse("OK", 1000);
+    delay(DELAY_MS);
+}
+
+/*****************************************************************************************
+ * getGps() Function
+ *****************************************************************************************/
+void getGps()
+{
+    // Can take up to 60 seconds
+    boolean newData = false;
+    for (unsigned long start = millis(); millis() - start < 2000;)
+    {
+        while (neogps.available())
+        {
+            if (gps.encode(neogps.read()))
+            {
+                newData = true;
+                break;
+            }
+        }
+    }
+
+    if (newData) // If newData is true
+    {
+        latitude = String(gps.location.lat(), 6);
+        longitude = String(gps.location.lng(), 6);
+        newData = false;
+    }
+    else
+    {
+        Serial.println("No GPS data is available");
+        latitude = "";
+        longitude = "";
+    }
+
+    Serial.print("Latitude= ");
+    Serial.println(latitude);
+    Serial.print("Logitude= ");
+    Serial.println(longitude);
+}
+
+/*****************************************************************************************
+ * criticalLevel() Function
+ *****************************************************************************************/
+void criticalLevel()
+{
+    for (unsigned long start = millis(); millis() - start < 5000;)
+    {
+        if (digitalRead(GREEN_BUTTON) == HIGH)
+        {
+            critical_level = "GREEN";
+            Serial.println("GREEN");
+            digitalWrite(BUZZER, LOW);
+            return;
+        }
+        else if (digitalRead(BLUE_BUTTON) == HIGH)
+        {
+            critical_level = "BLUE";
+            Serial.println("BLUE");
+            digitalWrite(BUZZER, LOW);
+            return;
+        }
+        else if (digitalRead(RED_BUTTON) == HIGH)
+        {
+            critical_level = "RED";
+            Serial.println("RED");
+            digitalWrite(BUZZER, LOW);
+            return;
+        }
+    }
+    critical_level = "RED";
+    digitalWrite(BUZZER, LOW);
+}
+
+/*****************************************************************************************
+ * init_gps() function
+ *****************************************************************************************/
 void init_gps()
 {
     lcd.clear();
@@ -186,6 +476,9 @@ void init_gps()
     }
 }
 
+/*****************************************************************************************
+ * init_gsm() function
+ *****************************************************************************************/
 void init_gsm()
 {
     lcd.clear();
@@ -226,6 +519,9 @@ void init_gsm()
     delay(3000);
 }
 
+/*****************************************************************************************
+ * gprs_connect() function
+ *****************************************************************************************/
 void gprs_connect()
 {
 
@@ -276,6 +572,9 @@ void gprs_connect()
     }
 }
 
+/*****************************************************************************************
+ * is_gprs_connected() function
+ *****************************************************************************************/
 boolean is_gprs_connected()
 {
     SIM800.println("AT+SAPBR=2,1");
@@ -287,6 +586,9 @@ boolean is_gprs_connected()
     return true;
 }
 
+/*****************************************************************************************
+ * gprs_disconnect() function
+ *****************************************************************************************/
 boolean gprs_disconnect()
 {
     // Disconnect GPRS
@@ -302,6 +604,9 @@ boolean gprs_disconnect()
     return true;
 }
 
+/*****************************************************************************************
+ * waitResponse() function
+ *****************************************************************************************/
 boolean waitResponse(String expected_answer, unsigned int timeout)
 {
     uint8_t x = 0, answer = 0;
