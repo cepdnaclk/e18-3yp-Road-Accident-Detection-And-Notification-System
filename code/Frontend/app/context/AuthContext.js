@@ -15,7 +15,7 @@ export const AuthProvider = ({children}) => {
     }, [])
 
     useEffect(()=>{
-        // console.log("updated List: ",userInfo);
+        console.log("updated List: ",userInfo);
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     },[userInfo])
 
@@ -200,7 +200,7 @@ export const AuthProvider = ({children}) => {
 
         let body ={
             emergency: {
-                name: toTitleCase(fname) + ' ' + toTitleCase(lname),
+                name: toCamelCase(fname) + ' ' + toCamelCase(lname),
                 phoneNum: telNo
             }
         }
