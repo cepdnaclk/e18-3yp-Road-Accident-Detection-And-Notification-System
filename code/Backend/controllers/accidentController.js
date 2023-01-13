@@ -17,7 +17,7 @@ const addAccident =asyncHandler(async(req,res) =>{
 }
   try {
         const closetContacts= await Driver.findOne({"deviceNum":req.body.deviceNum}) 
-        console.log(closetContacts.emergency)
+
         const accident = await Accident.create(req.body);
 
         const latitude=req.body.latitude;
@@ -43,7 +43,7 @@ const addAccident =asyncHandler(async(req,res) =>{
             longitude, 
             latitude
         });
-        console.log("hoo")
+
 
         res.status(200).json(closetContacts.emergency);
         return;
