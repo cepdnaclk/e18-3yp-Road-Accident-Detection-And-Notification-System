@@ -1,4 +1,4 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -15,6 +15,9 @@ const Stack = createNativeStackNavigator();
 
 function Navigation(props) {
     const { userInfo } = useContext(AuthContext);
+    useEffect(() => {
+      console.log(userInfo);
+    }, [])
 
     return (
         <NavigationContainer>

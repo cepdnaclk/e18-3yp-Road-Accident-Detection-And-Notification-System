@@ -9,9 +9,13 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [emergencyList, setEmergencyList] = useState([])
 
     useEffect(() => {
         loadUserInfo()
+        console.log('before' + emergencyList)
+        setEmergencyList(...emergencyList, {"emergency" : [{"A": 100}, {"B": 200}, {"C": 300}, {"D": 400}]})
+        console.log('after' + emergencyList)
         // const arr = [1, 2, 3, 4, 9, 8];
         // arr.map(e => console.log(e));
         // console.log(JSON.stringify(userInfo))
@@ -19,7 +23,43 @@ export const AuthProvider = ({children}) => {
         //     console.log(userInfo.emergency);
         //     userInfo.emergency.map(e => console.log(e))
         // }
-    }, [userInfo])
+    }, [])
+
+    function toTitleCase(str){
+        let res = ''
+        const WordArray =  str.split(' ')
+            .map(element => element.trim())
+            .filter(element => element !== '');
+        WordArray.map(s => {
+            for (let i = 0; i < s.length; i++) {
+                if (i === 0) {
+                    res += s.charAt(0).toUpperCase()
+                } else {
+                    res += s.charAt(i).toLowerCase()
+                }
+            }
+            res += ' '
+        })
+        return res.trim()
+    };
+
+    function toCamelCase(str){
+        let res = ''
+        const WordArray =  str.split(' ')
+            .map(element => element.trim())
+            .filter(element => element !== '');
+        WordArray.map(s => {
+            for (let i = 0; i < s.length; i++) {
+                res += s.charAt(i).toUpperCase()
+            }
+            res += ' '
+        })
+        return res.trim()
+    };
+
+    const addEmergencyUserInfo = (key, value) => {
+        setUserInfo(prevState => ({...prevState, [key]: value}));
+    };
 
     const loadUserInfo = async () => {
         try {
@@ -165,40 +205,10 @@ export const AuthProvider = ({children}) => {
 
     }
 
-    function toTitleCase(str){
-        let res = ''
-        const WordArray =  str.split(' ')
-            .map(element => element.trim())
-            .filter(element => element !== '');
-        WordArray.map(s => {
-            for (let i = 0; i < s.length; i++) {
-                if (i === 0) {
-                    res += s.charAt(0).toUpperCase()
-                } else {
-                    res += s.charAt(i).toLowerCase()
-                }
-            }
-            res += ' '
-        })
-        return res.trim()
-    };
-
-    function toCamelCase(str){
-        let res = ''
-        const WordArray =  str.split(' ')
-            .map(element => element.trim())
-            .filter(element => element !== '');
-        WordArray.map(s => {
-            for (let i = 0; i < s.length; i++) {
-                res += s.charAt(i).toUpperCase()
-            }
-            res += ' '
-        })
-        return res.trim()
-    };
-
     const AddEmergencyContact = async (fname,lname,telNo) =>{
+        setIsLoading(true)
 
+        console.log('Add emergency contact')
         let body ={
             emergency: {
                 name: toTitleCase(fname) + ' ' + toTitleCase(lname),
@@ -210,21 +220,28 @@ export const AuthProvider = ({children}) => {
         // console.log(userInfo.token);
         // console.log(JSON.stringify(body));
         const header ={
-            headers: {Authorization: `Bearer ${userInfo.token}`},
+            headers: {'Authorization': `Bearer ${userInfo.token}`},
         }
 
         await axios
-        .put(`${BASE_URL}/drivers/addemergency`,JSON.stringify(body),JSON.stringify(header))
+        .put(`${BASE_URL}/drivers/addemergency`,body,header)
         .then(res =>{
-            let userInfo = JSON.stringify(res.data);
-            console.log(userInfo);
-            userInfo["token"] = token;
-            console.log(userInfo);
-            setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            let Info = res.data;
+            console.log('userInfo---------\n' + JSON.stringify(userInfo));
+            console.log('emergency---------\n' + JSON.stringify(Info.emergency));
+            // addEmergencyUserInfo("emergency", JSON.stringify(Info.emergency))
+            // setUserInfo({...userInfo, emergency : JSON.stringify(Info.emergency)})
+            // setUserInfo(async(prevState) => ({...prevState, "emergency": JSON.stringify(Info.emergency)}));
+            // userInfo = {...userInfo , JSON.stringify({"emergency" : {name : "Madushan"}})};
+            // setUserInfo({...userInfo, "emergency" : [{"A": 100}, {"B": 200}, {"C": 300}, {"D": 400}]})
+            // setUserInfo({"emergency":JSON.stringify(Info.emergency)})
+            console.log('newUserInfo---------\n' + JSON.stringify(userInfo));
+            // AsyncStorage.setItem('userInfo', JSON.stringify(Info));
+            setIsLoading(false);
         })
         .catch(e =>{
-            console.log(`Login error ${e}`);
+            console.log(`Add contact error ${e}`);
+            setIsLoading(false);
         });
     };
 

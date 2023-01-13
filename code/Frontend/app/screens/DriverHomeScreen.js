@@ -15,6 +15,7 @@ import {
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import ContactListCard from '../components/ContactListCard';
 import ProfilePic from '../assets/profPic/ProfilePic';
@@ -46,7 +47,7 @@ const DriverHomeScreen = ({navigation}) => {
     });
     const [errors, setErrors] = useState({});
 
-    const { AddEmergencyContact, toCamelCase } = useContext(AuthContext);
+    const { isLoading, AddEmergencyContact, toCamelCase } = useContext(AuthContext);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -93,7 +94,7 @@ const DriverHomeScreen = ({navigation}) => {
         if (valid) {
             const name = toCamelCase(modalInputs.fname) + ' ' + toCamelCase(modalInputs.lname);
             addContact(name, modalInputs.tpNo);
-            // AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
+            AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);  
             console.log(name);
             setModalInputs({
                 fname: '',
@@ -116,6 +117,7 @@ const DriverHomeScreen = ({navigation}) => {
         // <ScrollView>
         <>
             <ModalPopUp visible={visible}>
+                <Spinner visible={isLoading} />
                 <View style={{alignItems: 'center'}}>
                     <View style={styles.header}>
                         <Text style={{color: 'rgba(181, 181, 181, 0.7)', fontFamily: 'YanoneKaff', fontSize: 20, letterSpacing: 1.5, paddingLeft: '3%'}}>New Contact</Text>

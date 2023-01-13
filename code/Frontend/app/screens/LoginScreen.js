@@ -80,8 +80,7 @@ const LoginScreen = ({navigation}) => {
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
-                            // onPress={() => navigation.navigate('Welcome')}
-                            onPress={() => navigation.navigate('AmbulanceHome')}
+                            onPress={() => navigation.navigate('Welcome')}
                             style={styles.back}>
 
                             <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />

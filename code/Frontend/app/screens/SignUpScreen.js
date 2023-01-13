@@ -253,13 +253,6 @@ const SignUpScreen = ({navigation}) => {
 
         if (valid) {
             signUp()
-            // if (state === 0) {
-            //     navigation.replace('AmbulanceHome');
-            // } else if (state === 1) {
-            //     navigation.replace('DriverHome');
-            // } else if (state === 2) {
-            //     navigation.replace('Welcome');
-            // }
         }
     };
 
