@@ -1,5 +1,6 @@
 const Accident = require('../models/accidentModel');
 const ActiveCases = require('../models/activecasesModel');
+const Driver = require('../models/driverModel');
 const asyncHandler = require('express-async-handler');
 
 const Ambulance = require('../models/ambulanceModel');
@@ -15,6 +16,8 @@ const addAccident =asyncHandler(async(req,res) =>{
     throw new Error('Please add all fields')
 }
   try {
+        const closetContacts= await Driver.findOne({"deviceNum":req.body.deviceNum}) 
+        console.log(closetContacts.emergency)
         const accident = await Accident.create(req.body);
 
         const latitude=req.body.latitude;
@@ -32,7 +35,7 @@ const addAccident =asyncHandler(async(req,res) =>{
             }
         ]);
 
-        
+
         const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
 
         const activeCases = await ActiveCases.create({
@@ -40,18 +43,10 @@ const addAccident =asyncHandler(async(req,res) =>{
             longitude, 
             latitude
         });
+        console.log("hoo")
 
-        res.status(200).send({success:true, msg:"Ambulance details", data:find_ambulances});
+        res.status(200).json(closetContacts.emergency);
         return;
-
-    //  catch(error){
-    //     res.status(400).send({success:false,msg:error.message})
-    // }
-    
-        // return res.status(200).json({
-        //   success: true,
-        //   data: accident
-        // });
 
       } catch (err) {
           return res.status(400).json({ err });
