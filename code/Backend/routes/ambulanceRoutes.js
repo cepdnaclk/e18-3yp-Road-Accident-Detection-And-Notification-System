@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const{registerAmbulance, loginAmbulances, getMe, removeMe,updateMe} = require('../controllers/ambulanceController')
-const{assignAmbulance} = require('../controllers/assignAmbulanceController')
+const{assignAmbulance,ResponseAccident} = require('../controllers/assignAmbulanceController')
 
 const {protect} = require('../middleware/ambulanceAuthMiddleware')
 
@@ -11,6 +11,6 @@ router.get('/me',protect,getMe);
 router.delete('/me',protect,removeMe);
 router.put('/me',protect,updateMe);
 router.post('/findaccident',assignAmbulance);
-
+router.post('/responseaccident',ResponseAccident);
 
 module.exports = router

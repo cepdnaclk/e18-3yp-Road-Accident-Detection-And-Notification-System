@@ -20,8 +20,11 @@ const addAccident =asyncHandler(async(req,res) =>{
 
         const accident = await Accident.create(req.body);
 
+
         const latitude=req.body.latitude;
         const longitude=req.body.longitude;
+        const deviceNum=req.body.deviceNum;
+
 
         const find_ambulances = await Ambulance.aggregate([
             {
@@ -37,15 +40,17 @@ const addAccident =asyncHandler(async(req,res) =>{
 
 
         const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
-        const state="Active"
+
 
         const activeCases = await ActiveCases.create({
             lisencePlateNum,
+            deviceNum,
             longitude, 
             latitude,
-            state
+            state:"Active"
             
         });
+
 
 
         res.status(200).json(closetContacts.emergency);

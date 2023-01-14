@@ -1,4 +1,5 @@
 const ActiveCases = require('../models/activecasesModel');
+const Accident = require('../models/accidentModel');
 const asyncHandler = require('express-async-handler');
 
 
@@ -27,7 +28,32 @@ const assignAmbulance = asyncHandler(async (req, res) => {
 })
 
 
+// @desc response after the patient is delivered to the hospital
+// @route POST /api/responseaccident 
+// @access Public
+const ResponseAccident = asyncHandler(async (req, res) => {
+    const responseCase = await ActiveCases.findOne({"lisencePlateNum":req.body.lisencePlateNum})
+
+    if (!responseCase) {
+      res.status(201).json({ state: "There's no assigned case" })
+    }
+    else if(responseCase.state=="Assigned"){
+        const deviceNum=responseCase.deviceNum
+        const deleted =await ActiveCases.deleteOne({"lisencePlateNum":req.body.lisencePlateNum})
+        const updated =await Accident.updateOne({"deviceNum":deviceNum,"activeState":"Active"},{$set:{activeState:"Completed"}})
+        res.status(201).json({
+            state: "Updated.Job well done"  
+        })      
+    }
+    else{
+        res.status(201).json({
+            state: "The case is not assigned yet"
+        })
+    }
+})
+
 
 module.exports = {
-    assignAmbulance
+    assignAmbulance,
+    ResponseAccident
 }
