@@ -37,11 +37,14 @@ const addAccident =asyncHandler(async(req,res) =>{
 
 
         const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
+        const state="Active"
 
         const activeCases = await ActiveCases.create({
             lisencePlateNum,
             longitude, 
-            latitude
+            latitude,
+            state
+            
         });
 
 

@@ -14,6 +14,10 @@ const activecasesSchema = mongoose.Schema({
     latitude:{
         type: String,
         required: [true, 'Please add latitude']
+    },
+    state:{
+        type: String,
+        required: [true, 'Please add latitude']
     }
 },
 {
