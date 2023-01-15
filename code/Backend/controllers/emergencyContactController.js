@@ -140,6 +140,31 @@ const emergeAccident = asyncHandler( async(req,res) =>{
  
 });
 
+// @desc Send assigned driver details to emergency contacts
+// @route POST/api/emergencycontacts/details
+// @access Public
+const driverDetails = asyncHandler( async(req,res) =>{
+   
+    const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
+
+    const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
+
+    if(!driver){
+        res.status(201).json({state:"No driver assigned to emergency contact"})
+    }
+    else{
+
+        res.status(201).json({
+            fname:driver.fname,
+            lname:driver.lname,
+            nic:driver.nic,
+            telNum:driver.telNum
+
+        })
+    }
+
+ 
+});
 
 //Generate JWT
 const generateToken = (id) =>{
@@ -154,5 +179,6 @@ module.exports = {
     getMe,
     removeMe,
     updateMe,
-    emergeAccident
+    emergeAccident,
+    driverDetails
 }
