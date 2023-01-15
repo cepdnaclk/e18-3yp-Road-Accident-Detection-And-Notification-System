@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { 
     ImageBackground, 
@@ -15,30 +15,56 @@ import {
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import ContactListCard from '../components/ContactListCard';
-import ProfilePic from '../assets/profPic/ProfilePic';
 import ModalPopUp from '../components/ModalPopUp';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import CustomNavigationBar from '../components/CustomNavigationBar';
 import { AuthContext } from '../context/AuthContext';
 
-const renderItem = ({ item }) => (
-    <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
-);
+let currentIndex = 0
+const profilePics = [
+    {
+        image: require('../assets/profPic/picture1.jpg'),
+    },
+    {
+        image: require('../assets/profPic/picture2.jpg'),
+    },
+    {
+        image: require('../assets/profPic/picture3.jpg'),
+    },     
+]
+
+const renderItem = ({ item }) => {
+    currentIndex = currentIndex + 1;
+    if (currentIndex == 3) {
+        currentIndex = 0
+    }
+    return (
+        <ContactListCard name={item.name} telephoneNo={item.phoneNum} image={profilePics[currentIndex].image} />
+    );
+};
 
 const DriverHomeScreen = ({navigation}) => {
 
+    // useEffect(() => {
+
+    //     // const interval = setInterval(() => {
+    //     //     console.log('repeated')
+    //     // }, 5000);
+    //     // return () => clearInterval(interval);
+    // }, []);
+
     const [visible, setVisible] = useState(false);
-    const [list, setList] = useState(ProfilePic);
     const [modalInputs, setModalInputs] = useState({
         fname: '',
         lname: '',
         tpNo: '',
     });
+    const [errors, setErrors] = useState({});
 
-    const { AddEmergencyContact } = useContext(AuthContext);
+    const { isLoading, userInfo, AddEmergencyContact } = useContext(AuthContext);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -48,17 +74,44 @@ const DriverHomeScreen = ({navigation}) => {
         'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf'),
     });
 
-    const addContact = (name, tpNo) => {
-        const e = {
-            name: name,
-            telephoneNo: tpNo,
-            image: require('../assets/profPic/picture1.jpg'),
-        };
-        setList([...list, e]);
-    };
-
     const handleOnChange = (text, input) => {
         setModalInputs(prevState => ({...prevState, [input]: text}));
+    };
+
+    const ValidateInputs = () => {
+        // Keyboard.dismiss();
+        let valid = true;
+
+        if (!modalInputs.fname && !modalInputs.lname) {
+            handleError('Please input atleast firsnamet or lastname', 'fname');
+            valid = false;
+        } else if (modalInputs.fname || modalInputs.lname) {
+            handleError('', 'fname');
+        }
+        if (!modalInputs.tpNo) {
+            handleError('Please input telephone number', 'tpNo');
+            valid = false;
+        } else if (!(modalInputs.tpNo.length === 10 || modalInputs.tpNo.length === 9) || !parseInt(modalInputs.tpNo)) {
+            handleError('Invalid telephone number', 'tpNo');
+            valid = false;
+        } else {
+            handleError('', 'tpNo');
+        }
+        console.log(errors)
+
+        if (valid) {
+            AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
+            setModalInputs({
+                fname: '',
+                lname: '',
+                tpNo: '',
+            })
+            setVisible(false);            
+        }
+    };
+
+    const handleError = (errorMsg, input) => {
+        setErrors((prevState) => ({...prevState, [input]: errorMsg}));
     };
 
     if (!fontsLoaded) {
@@ -69,10 +122,18 @@ const DriverHomeScreen = ({navigation}) => {
         // <ScrollView>
         <>
             <ModalPopUp visible={visible}>
+                <Spinner visible={isLoading} />
                 <View style={{alignItems: 'center'}}>
                     <View style={styles.header}>
                         <Text style={{color: 'rgba(181, 181, 181, 0.7)', fontFamily: 'YanoneKaff', fontSize: 20, letterSpacing: 1.5, paddingLeft: '3%'}}>New Contact</Text>
-                        <TouchableOpacity onPress={() => {setVisible(false)}}>
+                        <TouchableOpacity onPress={() => {
+                            setModalInputs({
+                                fname: '',
+                                lname: '',
+                                tpNo: '',
+                            })
+                            setVisible(false)
+                        }}>
                             <Ionicons name="close" size={24} color="rgba(181, 181, 181, 0.7)" />
                         </TouchableOpacity>
                     </View>
@@ -85,11 +146,10 @@ const DriverHomeScreen = ({navigation}) => {
                         label='firstname'
                         onChangeText={(text) => handleOnChange(text, 'fname')}
                         value={modalInputs.fname}
-                        // error={errors.hospital}
-                        // onFocus={() => {
-                        //     handleError(null, 'hospital');
-                        // }}
-                        // error='This is an error message'
+                        error={errors.fname}
+                        onFocus={() => {
+                            handleError(null, 'fname');
+                        }}
                         />
                     <CustomInput 
                         width='100%' 
@@ -111,7 +171,10 @@ const DriverHomeScreen = ({navigation}) => {
                         label='telephonenumber'
                         onChangeText={(text) => handleOnChange(text, 'tpNo')}
                         value={modalInputs.tpNo}
-                        // error='This is an error message'
+                        error={errors.tpNo}
+                        onFocus={() => {
+                            handleError(null, 'tpNo');
+                        }}
                         />
                     <View style={styles.modalBottomBtns}>
                         <CustomButton 
@@ -123,10 +186,7 @@ const DriverHomeScreen = ({navigation}) => {
                             color='#DBDBDB' 
                             title='Add Contact'
                             onPress={() => {
-                                const name = modalInputs.fname + ' ' + modalInputs.lname;
-                                addContact(name, modalInputs.tpNo);
-                                AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
-                                setVisible(false);
+                                ValidateInputs()
                             }} />
                         <CustomButton 
                             width='41%' 
@@ -136,7 +196,14 @@ const DriverHomeScreen = ({navigation}) => {
                             secondary='#AEA6CC' 
                             color='#5037A9' 
                             title='Cancel'
-                            onPress={() => {setVisible(false)}} />
+                            onPress={() => {
+                                setModalInputs({
+                                    fname: '',
+                                    lname: '',
+                                    tpNo: '',
+                                })
+                                setVisible(false)
+                            }} />
                     </View>
                 </View>
             </ModalPopUp>
@@ -162,14 +229,15 @@ const DriverHomeScreen = ({navigation}) => {
 
                     <View style={{flex: 1}}>
                         <FlatList style={{flex: 1}}
-                            data={list}
+                            // data={list}
+                            data={userInfo.emergency}
                             renderItem={renderItem}
-                            keyExtractor={item => item.telephoneNo}
+                            keyExtractor={item => item.phoneNum}
                         />
                     </View>
                 </ImageBackground>
             </View>
-            <CustomNavigationBar />
+            {/* <CustomNavigationBar /> */}
             <ExpoStatusBar style='light'/>
         </>
         // </ScrollView>

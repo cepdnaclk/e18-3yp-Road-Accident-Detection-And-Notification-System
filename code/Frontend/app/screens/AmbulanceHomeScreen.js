@@ -7,7 +7,6 @@ import { SwipeButton } from 'react-native-expo-swipe-button';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
-import CustomNavigationBar from '../components/CustomNavigationBar';
 import { AuthContext } from '../context/AuthContext';
 
 const AmbulanceImg = require('../assets/icons/ambulance_3d_left.png')
@@ -443,7 +442,6 @@ function AmbulanceHome({navigation}) {
                 underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
               />
             </View>
-            <CustomNavigationBar />
             <ExpoStatusBar style='light'/>
         </View>
     );

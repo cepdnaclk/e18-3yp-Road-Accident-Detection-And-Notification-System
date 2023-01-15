@@ -1,17 +1,19 @@
+#include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
 #include <math.h>
 #include <Wire.h>
+// #include <ArduinoJson.h>
 
-#define DELAY_MS 2000
+#define DELAY_MS 5000
 
 // must add i2c lcd address use i2c-scanner.ino file
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 //--------------------------------------------------------------
 // emergency phone number with country code
-// const String EMERGENCY_PHONE = "ENTER_EMERGENCY_PHONE_NUMBER";
+const String EMERGENCY_PHONE = "ENTER_EMERGENCY_PHONE_NUMBER";
 //--------------------------------------------------------------
 // GSM Module RX pin to Arduino 3
 // GSM Module TX pin to Arduino 2
@@ -39,19 +41,21 @@ String latitude = "6.05433";
 String longitude = "80.20042";
 String activeState = "accident";
 
-short xaxis = 0, yaxis = 0, zaxis = 0;
-short vibration = 10, devibrate = 150;
-short magnitude = 0;
-short sensitivity = 120;
+int xaxis = 0, yaxis = 0, zaxis = 0;
+int vibration = 10, devibrate = 150;
+int magnitude = 0;
+int sensitivity = 120;
 byte updateflag;
 String critical_level = "";
 
 boolean impact_detected = false;
 // Used to run impact routine every 2mS.
 unsigned long time1;
-// unsigned long impact_time;
-// unsigned long alert_delay = 30000; // 30 seconds
+unsigned long impact_time;
+unsigned long alert_delay = 30000; // 30 seconds
 //--------------------------------------------------------------
+
+// StaticJsonBuffer<200> jsonBuffer;
 
 // Function prototypes
 void Impact();
@@ -60,7 +64,7 @@ void getGps();
 void init_gps();
 void init_gsm();
 void gprs_connect();
-void sendToServer();
+void sendToServer(String data);
 boolean gprs_disconnect();
 boolean is_gprs_connected();
 boolean waitResponse(String expected_answer = "OK", unsigned int timeout = 2000);
@@ -86,6 +90,8 @@ void setup()
     pinMode(RED_BUTTON, INPUT);
     //--------------------------------------------------------------
 
+    // DynamicJsonBuffer jsonBuffer;
+
     lcd.init();
     lcd.backlight();
     lcd.clear();
@@ -100,7 +106,7 @@ void setup()
         gprs_connect();
     }
 
-    init_gps();
+    // init_gps();
 
     lcd.clear();
     time1 = micros();
@@ -111,6 +117,29 @@ void setup()
     // received_date = "";
     // msg = "";
     //--------------------------------------------------------------
+
+    //   SIM800.println("AT"); //Check GSM Module
+    //   delay(1000);
+    //   //SendAT("AT", "OK", 2000); //Check GSM Module
+    //   SIM800.println("ATE1"); //Echo ON
+    //   delay(1000);
+    //   //SendAT("ATE1", "OK", 2000); //Echo ON
+    //   SIM800.println("AT+CPIN?"); //Check SIM ready
+    //   delay(1000);
+    //   //SendAT("AT+CPIN?", "READY", 2000); //Check SIM ready
+    //   SIM800.println("AT+CMGF=1"); //SMS text mode
+    //   delay(1000);
+    //   //SendAT("AT+CMGF=1", "OK", 2000); //SMS text mode
+    //   SIM800.println("AT+CNMI=1,1,0,0,0"); /// Decides how newly arrived SMS should be handled
+    //   delay(1000);
+    //   //SendAT("AT+CNMI=1,1,0,0,0", "OK", 2000); //set sms received format
+    //   //AT +CNMI = 2,1,0,0,0 - AT +CNMI = 2,2,0,0,0 (both are same)
+    //   //--------------------------------------------------------------
+
+    //   //Serial.print("time1 = "); Serial.println(time1);
+    //   //--------------------------------------------------------------
+    //   //read calibrated values. otherwise false impact will trigger
+    //   //when you reset your Arduino. (By pressing reset button)
 
     xaxis = analogRead(xPin);
     yaxis = analogRead(yPin);
@@ -151,7 +180,7 @@ void loop()
         lcd.setCursor(1, 1);
         lcd.print("Critical Level");
 
-        getGps();
+        // getGps();
         criticalLevel();
 
         lcd.clear();
@@ -160,27 +189,36 @@ void loop()
         lcd.setCursor(0, 1);
         lcd.print(critical_level);
 
-        //        impact_detected = true;
-        //        impact_time = millis();
+        impact_detected = true;
+        impact_time = millis();
     }
 
     if (critical_level == "RED")
     {
+        // StaticJsonBuffer<200> jsonBuffer;
+        // JsonObject &object = jsonBuffer.createObject();
 
-        //        String sendtoserver_data;
-        // sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
-        //        sendtoserver_data = "";
+        // object.set("longitude", longitude);
+        // object.set("latitude", latitude);
+        // object.set("deviceNum", deviceID);
+        // object.set("activeState", activeState);
 
-        // Serial.println(sendtoserver_data);
-
-        while (!is_gprs_connected())
-        {
-            gprs_connect();
-        }
+        // object.printTo(Serial);
+        // Serial.println(" ");
+        String sendtoserver_data;
+        sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
+        // object.prettyPrintTo(sendtoserver_data);
+        Serial.println(sendtoserver_data);
 
         while (true)
         {
-            sendToServer();
+            if (!is_gprs_connected())
+            {
+                gprs_connect();
+
+                sendToServer(sendtoserver_data);
+            }
+
             // delay(4000);
         }
     }
@@ -227,9 +265,9 @@ void Impact()
     //--------------------------------------------------------------
     time1 = micros(); // resets time value
     //--------------------------------------------------------------
-    short oldx = xaxis; // store previous axis readings for comparison
-    short oldy = yaxis;
-    short oldz = zaxis;
+    int oldx = xaxis; // store previous axis readings for comparison
+    int oldy = yaxis;
+    int oldz = zaxis;
 
     xaxis = analogRead(xPin);
     yaxis = analogRead(yPin);
@@ -267,31 +305,30 @@ void Impact()
     // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 }
 
-void sendToServer()
+void sendToServer(String data)
 {
-
-    String data;
-    data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
-    Serial.println(data);
+    while (!is_gprs_connected())
+    {
+        gprs_connect();
+    }
 
     SIM800.println("AT+HTTPINIT");
-    int res = waitResponse();
-    if (!res)
-    {
-        SIM800.println("AT+HTTPTERM");
-        waitResponse();
-        delay(DELAY_MS);
+    delay(6000);
+    waitResponse();
 
-        SIM800.println("AT+HTTPINIT");
-        waitResponse();
-    }
+    SIM800.println("AT+HTTPPARA=\"CID\",1");
+    delay(6000);
+    waitResponse();
+
+    SIM800.println("AT+HTTPINIT");
+    waitResponse();
     delay(DELAY_MS);
 
     SIM800.println("AT+HTTPPARA=\"CID\",1");
     waitResponse();
     delay(DELAY_MS);
 
-    SIM800.println("AT+HTTPPARA=\"URL\",\"http://54.255.195.190:5000/api/accident\""); // Server address
+    SIM800.println("AT+HTTPPARA=\"URL\",\"http://192.168.137.1:5000/api/accident\""); // Server address
     waitResponse();
     delay(DELAY_MS);
 
@@ -299,8 +336,7 @@ void sendToServer()
     waitResponse();
     delay(DELAY_MS);
 
-    // SIM800.println("AT+HTTPDATA=" + String(data.length()) + ",100000");
-    SIM800.println("AT+HTTPDATA=\"100\",100000");
+    SIM800.println("AT+HTTPDATA=" + String(data.length()) + ",100000");
     waitResponse();
     delay(DELAY_MS);
 
@@ -317,7 +353,7 @@ void sendToServer()
     delay(DELAY_MS);
 
     SIM800.println("AT+HTTPTERM");
-    waitResponse("OK");
+    waitResponse("OK", 1000);
     delay(DELAY_MS);
 }
 

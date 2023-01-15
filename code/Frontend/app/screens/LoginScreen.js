@@ -4,11 +4,11 @@ import { ImageBackground, Image, StyleSheet, View, StatusBar, TouchableOpacity, 
 // import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import { AuthContext } from '../context/AuthContext';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 const LoginScreen = ({navigation}) => {
 
@@ -59,7 +59,6 @@ const LoginScreen = ({navigation}) => {
 
     const LogIn = () => {
         UserLogin(inputs.email, inputs.password);
-        // navigation.replace('DriverHome')
     }
 
     const handleError = (errorMsg, input) => {
@@ -81,8 +80,7 @@ const LoginScreen = ({navigation}) => {
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
-                            // onPress={() => navigation.navigate('Welcome')}
-                            onPress={() => navigation.navigate('AmbulanceHome')}
+                            onPress={() => navigation.navigate('Welcome')}
                             style={styles.back}>
 
                             <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
