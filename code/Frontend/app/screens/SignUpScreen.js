@@ -309,7 +309,7 @@ const SignUpScreen = ({navigation}) => {
                 <ImageBackground source={require('../assets/img/Background.png')} style={styles.image}>
                     <View style={styles.welcomeLogo}>
                         <TouchableOpacity 
-                            onPress={() => {console.log('here');/*navigation.navigate('Welcome')*/}}
+                            onPress={() => {/*console.log('here');*/navigation.navigate('Welcome')}}
                             style={styles.back}>
 
                             <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />

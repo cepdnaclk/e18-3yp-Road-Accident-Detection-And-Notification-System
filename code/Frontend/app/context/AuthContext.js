@@ -9,13 +9,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [accidentState, setAccidentState] = useState(0);
 
     useEffect(() => {
         loadUserInfo()
     }, [])
 
     useEffect(()=>{
-        console.log("updated List: ",userInfo);
+        // console.log("updated List: ",userInfo);
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     },[userInfo])
 
