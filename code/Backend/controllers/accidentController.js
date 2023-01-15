@@ -1,5 +1,6 @@
 const Accident = require('../models/accidentModel');
 const ActiveCases = require('../models/activecasesModel');
+const Driver = require('../models/driverModel');
 const asyncHandler = require('express-async-handler');
 
 const Ambulance = require('../models/ambulanceModel');
@@ -15,10 +16,15 @@ const addAccident =asyncHandler(async(req,res) =>{
     throw new Error('Please add all fields')
 }
   try {
-        const accident = await Accident.create(req.body);
+        const closetContacts= await Driver.findOne({"deviceNum":req.body.deviceNum}) 
+
+        
+
 
         const latitude=req.body.latitude;
         const longitude=req.body.longitude;
+        const deviceNum=req.body.deviceNum;
+
 
         const find_ambulances = await Ambulance.aggregate([
             {
@@ -32,26 +38,32 @@ const addAccident =asyncHandler(async(req,res) =>{
             }
         ]);
 
-        
+
         const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
 
-        const activeCases = await ActiveCases.create({
-            lisencePlateNum,
-            longitude, 
-            latitude
-        });
 
-        res.status(200).send({success:true, msg:"Ambulance details", data:find_ambulances});
+        const currentlyAssigned=await ActiveCases.findOne({"lisencePlateNum":lisencePlateNum})
+        if(!currentlyAssigned){
+            const accident = await Accident.create(req.body);
+            const activeCases = await ActiveCases.create({
+                lisencePlateNum,
+                deviceNum,
+                longitude, 
+                latitude,
+                state:"Active"
+                
+            });
+
+        }
+        else{
+            return res.status(401).json("Device already in an accident")
+        }
+
+
+
+
+        res.status(200).json(closetContacts.emergency);
         return;
-
-    //  catch(error){
-    //     res.status(400).send({success:false,msg:error.message})
-    // }
-    
-        // return res.status(200).json({
-        //   success: true,
-        //   data: accident
-        // });
 
       } catch (err) {
           return res.status(400).json({ err });

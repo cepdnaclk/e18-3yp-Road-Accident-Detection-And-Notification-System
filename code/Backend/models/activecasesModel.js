@@ -7,6 +7,10 @@ const activecasesSchema = mongoose.Schema({
         required: [true, 'Please add a Licence Plate Number'],
         unique:true
     },
+    deviceNum:{
+        type: String,
+        required: [true, 'Please device number'],
+    },
     longitude:{
         type: String,
         required: [true, 'Please add longitude']
@@ -14,6 +18,10 @@ const activecasesSchema = mongoose.Schema({
     latitude:{
         type: String,
         required: [true, 'Please add latitude']
+    },
+    state:{
+        type: String,
+        required: [true, 'Please add state']
     }
 },
 {
