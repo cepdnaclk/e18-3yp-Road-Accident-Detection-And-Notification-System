@@ -384,11 +384,13 @@ function AmbulanceHome({navigation}) {
         Animated.timing(boxHeight, {
           toValue: 170,
           duration: 300,
+          useNativeDriver: false
         }).start();
       } else {
         Animated.timing(boxHeight, {
           toValue: 60,
           duration: 300,
+          useNativeDriver: false
         }).start();
       }
       setExpanded(!expanded);
@@ -507,7 +509,7 @@ function AmbulanceHome({navigation}) {
                 
             </MapView>
             <View style={styles.bottom}>
-              <SwipeButton
+              {/* <SwipeButton
                 Icon={
                   <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
                 }
@@ -518,12 +520,33 @@ function AmbulanceHome({navigation}) {
                 onComplete={() => {console.log('Success!'); handlePress()}}
                 containerStyle={{
                   backgroundColor: 'rgba(90, 93, 125, 0.8)',
+                  alignItems: 'center',
                 }}
                 title="Slide to pick the patient"
-                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18 }}
+                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18, textAlign: 'center' }}
                 borderRadius={180}
                 underlayTitle="Release to complete"
                 underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
+              /> */}
+              <SwipeButton
+                Icon={
+                  <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
+                }
+                width= {280}
+                // circleSize={60}
+                // goBackToStart={false}
+                completeThresholdPercentage={50}
+                onComplete={() => console.log('Success!')}
+                title="Slide to pick the patient"
+                titleStyle={{color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18}}
+                titleContainerStyle={{marginLeft: 'auto', width: '90%'}}
+                borderRadius={180}
+                containerStyle={{ backgroundColor: 'rgba(90, 93, 125, 0.8)' }}
+                underlayStyle={{backgroundColor: 'rgba(90, 93, 125, 1)'}}
+                underlayTitle="Slide to complete the Job"
+                underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18}}
+                underlayTitleContainerStyle={{width: '80%'}}
+                circleBackgroundColor='#2B2A46'
               />
             </View>
             <ExpoStatusBar style='light'/>

@@ -23,9 +23,9 @@ export const AuthProvider = ({children}) => {
     useEffect(() => {
         setInterval(() => {
             if (userInfo.userState === 0) {
-                updateAmbLocation(12,15)
-                GetAccidentLocation(154879)
-                console.log(accidentState);
+                // updateAmbLocation(12,15)
+                // GetAccidentLocation(154879)
+                // console.log(accidentState);
             }
         }, 1000);
     }, []);
@@ -289,6 +289,7 @@ export const AuthProvider = ({children}) => {
             value={{
                 isLoading,
                 userInfo,
+                accidentState,
                 DriverRegister,
                 AmbulanceRegister,
                 EmergencyRegister,
