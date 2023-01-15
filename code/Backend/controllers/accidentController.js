@@ -18,7 +18,7 @@ const addAccident =asyncHandler(async(req,res) =>{
   try {
         const closetContacts= await Driver.findOne({"deviceNum":req.body.deviceNum}) 
 
-        const accident = await Accident.create(req.body);
+        
 
 
         const latitude=req.body.latitude;
@@ -42,14 +42,23 @@ const addAccident =asyncHandler(async(req,res) =>{
         const lisencePlateNum = find_ambulances[0]["lisencePlateNum"];
 
 
-        const activeCases = await ActiveCases.create({
-            lisencePlateNum,
-            deviceNum,
-            longitude, 
-            latitude,
-            state:"Active"
-            
-        });
+        const currentlyAssigned=await ActiveCases.findOne({"lisencePlateNum":lisencePlateNum})
+        if(!currentlyAssigned){
+            const accident = await Accident.create(req.body);
+            const activeCases = await ActiveCases.create({
+                lisencePlateNum,
+                deviceNum,
+                longitude, 
+                latitude,
+                state:"Active"
+                
+            });
+
+        }
+        else{
+            return res.status(401).json("Device already in an accident")
+        }
+
 
 
 
