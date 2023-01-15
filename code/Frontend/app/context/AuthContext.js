@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [accidentState, setAccidentState] = useState(0);
+    const [accidentState, setAccidentState] = useState('Not Active');
 
     useEffect(() => {
         loadUserInfo()
@@ -19,6 +19,16 @@ export const AuthProvider = ({children}) => {
         // console.log("updated List: ",userInfo);
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     },[userInfo])
+
+    useEffect(() => {
+        setInterval(() => {
+            if (userInfo.userState === 0) {
+                updateAmbLocation(12,15)
+                GetAccidentLocation(154879)
+                console.log(accidentState);
+            }
+        }, 1000);
+    }, []);
 
     function toTitleCase(str){
         let res = ''
@@ -234,15 +244,45 @@ export const AuthProvider = ({children}) => {
         await axios
         .post(`${BASE_URL}/ambulances/findaccident`,body)
         .then(res =>{
-            let userInfo = res.data;
-            setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-            console.log(userInfo);
+            let { state } = res.data;
+            setAccidentState(state);
+            // setUserInfo(userInfo);
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            // console.log(state);
         })
         .catch(e =>{
-            console.log(`register error ${e}`);
+            console.log(`get accident error ${e}`);
         });
     };
+
+    const updateAmbLocation = async (latitude, longitude) => {
+
+        let body ={
+            location: {
+                type: 'Point',
+                coordinates: [latitude, longitude],
+            }
+        }
+        const header ={
+            headers: {'Authorization': `Bearer ${userInfo.token}`},
+        }
+
+        await axios
+        .put(`${BASE_URL}/ambulances/me`,body,header)
+        .then(res =>{
+            let Info = res.data;
+            // const newEmergency = [...Info.emergency]
+            // setUserInfo({
+            // ...userInfo, 
+            // emergency: newEmergency
+            // });
+            // setIsLoading(false);
+        })
+        .catch(e =>{
+            console.log(`update Ambulance Location error ${e}`);
+            // setIsLoading(false);
+        });
+    }
 
     return (
         <AuthContext.Provider 
@@ -258,6 +298,7 @@ export const AuthProvider = ({children}) => {
                 toCamelCase,
                 AddEmergencyContact,
                 GetAccidentLocation,
+                updateAmbLocation,
         }}>
             {children}
         </AuthContext.Provider>

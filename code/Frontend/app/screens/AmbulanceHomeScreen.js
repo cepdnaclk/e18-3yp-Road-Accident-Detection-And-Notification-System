@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, StatusBar, TouchableOpacity, Image, Animated } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
 import { SwipeButton } from 'react-native-expo-swipe-button';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
 import { AuthContext } from '../context/AuthContext';
@@ -361,6 +360,9 @@ const mapStyle = [
 //     }
 //   ]
 
+let paddingval = 8
+let bgCol = 'rgba(90, 93, 125, 0.55)'
+
 function AmbulanceHome({navigation}) {
 
     const [origin, setOrigin] = useState({
@@ -374,6 +376,24 @@ function AmbulanceHome({navigation}) {
     });
     const [state, setState] = useState(0);
 
+    const [boxHeight, setBoxHeight] = useState(new Animated.Value(60));
+    const [expanded, setExpanded] = useState(false);
+
+    const handlePress = () => {
+      if (!expanded) {
+        Animated.timing(boxHeight, {
+          toValue: 160,
+          duration: 300,
+        }).start();
+      } else {
+        Animated.timing(boxHeight, {
+          toValue: 60,
+          duration: 300,
+        }).start();
+      }
+      setExpanded(!expanded);
+    }
+
     const [fontsLoaded] = useFonts({
       'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
     });
@@ -386,22 +406,45 @@ function AmbulanceHome({navigation}) {
       }, 10000);
     }, []);
 
+    // useEffect(() => {
+    //   setInterval(() => {
+    //    console.log('1');
+    //   }, 1000);
+    // }, []);
+
     if (!fontsLoaded) {
       return null;
     }
     
     return (
         <View style={styles.container}>
-            <View style={styles.topPanel}>
-                <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
-                <TouchableOpacity 
-                    // onPress={() => navigation.navigate('Welcome')}
-                    onPress={() => console.log('back-ambulance')}
-                    style={styles.back}>
+            {/* <View style={styles.topPanel}> */}
+            <Animated.View style={[styles.topPanel, {height: boxHeight}]}>
+              {expanded ? (
+                <View style={styles.patientCard}>
+                  <View style={{width: '100%', height: '100%'}}>
+                    <View style={{backgroundColor: 'red', width: '100%', height: '75%'}}>
 
-                    <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
-                </TouchableOpacity>
-            </View>
+                    </View>
+                    <View style={{backgroundColor: 'green', width: '100%', height: '25%'}}>
+                      
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
+                  <TouchableOpacity 
+                      // onPress={() => navigation.navigate('Welcome')}
+                      onPress={handlePress}
+                      style={styles.back}>
+
+                      <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
+                  </TouchableOpacity>
+                </>
+              )}
+            </Animated.View>
+            {/* </View> */}
             <MapView 
                 style={styles.map}
                 customMapStyle={mapStyle}
@@ -431,7 +474,7 @@ function AmbulanceHome({navigation}) {
                 width= {280}
                 circleSize={73}
                 circleBackgroundColor='#2B2A46'
-                onComplete={() => {console.log('Success!')}}
+                onComplete={() => {console.log('Success!'); handlePress()}}
                 containerStyle={{
                   backgroundColor: 'rgba(90, 93, 125, 0.8)',
                 }}
@@ -456,15 +499,24 @@ const styles = StyleSheet.create({
     topPanel: {
         position: 'absolute',
         zIndex: 10,
-        height: '8%',
-        width: '95%',
+        width: '92%',
         backgroundColor: 'rgba(90, 93, 125, 0.55)',
         borderRadius: 15,
         top: StatusBar.currentHeight,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingRight: 8,
+        paddingRight: paddingval,
+    },
+    patientCard: {
+        margin: 4,
+        borderRadius: 15,
+        height: '100%',
+        width: '100%',
+        // backgroundColor: 'red',
+        paddingHorizontal: '9%',
+        paddingVertical: '3%',
+        paddingTop: '5%'
     },
     map: {
         width: '100%',
