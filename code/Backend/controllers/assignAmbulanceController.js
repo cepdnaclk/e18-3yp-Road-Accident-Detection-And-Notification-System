@@ -65,8 +65,9 @@ const ResponseAccident = asyncHandler(async (req, res) => {
     }
     else if(responseCase.state=="Assigned"){
         const deviceNum=responseCase.deviceNum
+        const activeState=responseCase.patientCondition
         const deleted =await ActiveCases.deleteOne({"lisencePlateNum":req.body.lisencePlateNum})
-        const updated =await Accident.updateOne({"deviceNum":deviceNum,"activeState":"Active"},{$set:{activeState:"Completed"}})
+        const updated =await Accident.updateOne({"deviceNum":deviceNum,"activeState":activeState},{$set:{activeState:"Completed"}})
         res.status(201).json({
             state: "Updated.Job well done"  
         })      

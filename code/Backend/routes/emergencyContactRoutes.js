@@ -6,6 +6,7 @@ const {protect} = require('../middleware/emergencyContactAuthMiddleware')
 
 router.post('/',registerEmergencyContact);
 router.post('/login',loginEmergencyContact);
+router.post('/accidents',emergeAccident);
 router.get('/me',protect,getMe);
 router.delete('/me',protect,removeMe);
 router.put('/me',protect,updateMe);

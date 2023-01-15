@@ -114,33 +114,31 @@ const updateMe = asyncHandler( async(req,res) =>{
 });
 
 // @desc Display an accident to emergency contacts
-// @route PUT/api/emergencycontacts/accidents
+// @route POST/api/emergencycontacts/accidents
 // @access Public
-// const emergeAccident = asyncHandler( async(req,res) =>{
+const emergeAccident = asyncHandler( async(req,res) =>{
    
-//     const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
+    const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
 
-//     const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
+    const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
 
-//     const currentCase= await ActiveCases.findById({"deviceNum":driver.deviceNum})
-//     if(!currentCase){
-//         res.status(201).json({state:"No Accident"})
-//     }
-//     else{
+    const currentCase= await ActiveCases.findOne({"deviceNum":driver.deviceNum})
+    if(!currentCase){
+        res.status(201).json({state:"No Accident"})
+    }
+    else{
 
-//         res.status(201).json({
-//             longitude:currentCase.longitude,
-//             latitude:currentCase.latitude,
-//             ambulanceState:currentCase.state,
-//             criticalState:
-
-
-
-//         })
-//     }
+        res.status(201).json({
+            state:"Accident",
+            longitude:currentCase.longitude,
+            latitude:currentCase.latitude,
+            ambulanceState:currentCase.state,
+            criticalState:currentCase.patientCondition
+        })
+    }
 
  
-// });
+});
 
 
 //Generate JWT
@@ -155,5 +153,6 @@ module.exports = {
     loginEmergencyContact,
     getMe,
     removeMe,
-    updateMe
+    updateMe,
+    emergeAccident
 }
