@@ -22,6 +22,10 @@ const activecasesSchema = mongoose.Schema({
     state:{
         type: String,
         required: [true, 'Please add state']
+    },
+    patientCondition:{
+        type: String,
+        required: [true, 'Please state the condition of the patient']
     }
 },
 {

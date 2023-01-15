@@ -1,4 +1,6 @@
 const EmergencyContact = require('../models/emergencyContactModel');
+const Driver = require('../models/driverModel');
+const ActiveCases = require('../models/activecasesModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -110,6 +112,35 @@ const updateMe = asyncHandler( async(req,res) =>{
     res.status(200).json(updatedEmergencyContact)
  
 });
+
+// @desc Display an accident to emergency contacts
+// @route PUT/api/emergencycontacts/accidents
+// @access Public
+// const emergeAccident = asyncHandler( async(req,res) =>{
+   
+//     const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
+
+//     const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
+
+//     const currentCase= await ActiveCases.findById({"deviceNum":driver.deviceNum})
+//     if(!currentCase){
+//         res.status(201).json({state:"No Accident"})
+//     }
+//     else{
+
+//         res.status(201).json({
+//             longitude:currentCase.longitude,
+//             latitude:currentCase.latitude,
+//             ambulanceState:currentCase.state,
+//             criticalState:
+
+
+
+//         })
+//     }
+
+ 
+// });
 
 
 //Generate JWT
