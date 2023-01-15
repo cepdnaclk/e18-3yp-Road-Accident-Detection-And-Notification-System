@@ -133,11 +133,15 @@ const updateMe = asyncHandler( async(req,res) =>{
 // @route PUT /api/drivers/addemergency
 // @access Private
 const addEmergency = asyncHandler( async(req,res) =>{
+
+    console.log(JSON.stringify(req.body.emergency))
     
     if(req.body.emergency){
+        console.log("HIIIId")
+        console.log(req.driver.id)
 
         const emergencyContact = await Driver.findOne({"_id":req.driver.id, "emergency.phoneNum":req.body.emergency.phoneNum});
-
+        
         if(emergencyContact){
             res.status(400)
             throw new Error("Emergency Contact Already Exists")
