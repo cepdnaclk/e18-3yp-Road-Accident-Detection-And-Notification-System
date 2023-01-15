@@ -24,10 +24,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.madushan99.Frontend"
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0bbac2ad-8090-44f4-9421-d2bc63f36c3e"
+      }
+    }
+  },
+  "permissions": {
+    "location": {
+      "scope": "whenInUse"
     }
   }
 }
