@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, TouchableOpacity, Image, Animated } from 'react-native';
+import { View, StyleSheet, StatusBar, TouchableOpacity, Image, Animated, Text } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { SwipeButton } from 'react-native-expo-swipe-button';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5, Octicons, Feather } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
 import { AuthContext } from '../context/AuthContext';
@@ -382,7 +382,7 @@ function AmbulanceHome({navigation}) {
     const handlePress = () => {
       if (!expanded) {
         Animated.timing(boxHeight, {
-          toValue: 160,
+          toValue: 170,
           duration: 300,
         }).start();
       } else {
@@ -419,15 +419,56 @@ function AmbulanceHome({navigation}) {
     return (
         <View style={styles.container}>
             {/* <View style={styles.topPanel}> */}
-            <Animated.View style={[styles.topPanel, {height: boxHeight}]}>
+            <Animated.View style={[styles.topPanel, {height: boxHeight, backgroundColor: expanded ? 'rgba(90, 93, 125, 0.9)' : 'rgba(90, 93, 125, 0.7)'}]}>
               {expanded ? (
                 <View style={styles.patientCard}>
                   <View style={{width: '100%', height: '100%'}}>
-                    <View style={{backgroundColor: 'red', width: '100%', height: '75%'}}>
-
+                    <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', height: '66%'}}>
+                      <View style={{flexDirection: 'column', alignItems: 'center', width:85 , height: '100%', justifyContent: 'center'}}>
+                        <View style={styles.profilePic}>
+                          <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={require('../assets/profPic/picture3.jpg')}/>
+                        </View>
+                        <View style={{backgroundColor: '#FF6161', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
+                      </View>
+                      <View style={{flex: 1, height: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
+                            <FontAwesome5 name="user-injured" size={15} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Firstname Lastname</Text>
+                        </View>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
+                            <FontAwesome name="drivers-license-o" size={14} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>NIC-number</Text>
+                        </View>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center',  width: 20, height: 20, marginHorizontal: 16}}>
+                            <Octicons name="number" size={17} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Plate-number</Text>
+                        </View>
+                      </View>
                     </View>
-                    <View style={{backgroundColor: 'green', width: '100%', height: '25%'}}>
-                      
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 8, paddingRight: 2, width: '100%', height: '27%', marginTop: '3%'}}>
+                      <View>
+                        <Text style={{fontFamily: 'YanoneKaff', fontSize: 20, color: '#C2C2C2', marginTop: 5}}>13 min (9.5 km)</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', width: 97, justifyContent: 'space-between'}}>
+                        <TouchableOpacity 
+                          // onPress={() => navigation.navigate('Welcome')}
+                          onPress={handlePress}
+                          style={{height: '100%', width: 46, borderRadius: 10, backgroundColor: '#2D2B4B', justifyContent: 'center', alignItems: 'center'}}>
+                          <Feather name="phone-call" size={21} color="#B5B5B5" />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                          // onPress={() => navigation.navigate('Welcome')}
+                          onPress={handlePress}
+                          style={{height: '100%', width: 46, borderRadius: 10, backgroundColor: '#2D2B4B', justifyContent: 'center', alignItems: 'center'}}>
+                          <FontAwesome5 name="sync" size={21} color="#B5B5B5" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -500,7 +541,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         zIndex: 10,
         width: '92%',
-        backgroundColor: 'rgba(90, 93, 125, 0.55)',
         borderRadius: 15,
         top: StatusBar.currentHeight,
         flexDirection: 'row',
@@ -517,6 +557,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: '9%',
         paddingVertical: '3%',
         paddingTop: '5%'
+    },
+    profilePic: {
+        height: 70,
+        width: 70,
+        backgroundColor: 'rgba(90, 93, 125, 0.9)',
+        borderRadius: 15
     },
     map: {
         width: '100%',
