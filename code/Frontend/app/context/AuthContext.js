@@ -9,21 +9,16 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [emergencyList, setEmergencyList] = useState([])
+    const [accidentState, setAccidentState] = useState(0);
 
     useEffect(() => {
         loadUserInfo()
-        console.log('before' + emergencyList)
-        setEmergencyList(...emergencyList, {"emergency" : [{"A": 100}, {"B": 200}, {"C": 300}, {"D": 400}]})
-        console.log('after' + emergencyList)
-        // const arr = [1, 2, 3, 4, 9, 8];
-        // arr.map(e => console.log(e));
-        // console.log(JSON.stringify(userInfo))
-        // if (Object.keys(userInfo).length) {
-        //     console.log(userInfo.emergency);
-        //     userInfo.emergency.map(e => console.log(e))
-        // }
     }, [])
+
+    useEffect(()=>{
+        // console.log("updated List: ",userInfo);
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    },[userInfo])
 
     function toTitleCase(str){
         let res = ''
@@ -57,10 +52,6 @@ export const AuthProvider = ({children}) => {
         return res.trim()
     };
 
-    const addEmergencyUserInfo = (key, value) => {
-        setUserInfo(prevState => ({...prevState, [key]: value}));
-    };
-
     const loadUserInfo = async () => {
         try {
           const value = await AsyncStorage.getItem('userInfo');
@@ -91,7 +82,7 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
             // console.log(userInfo);
         })
@@ -120,7 +111,7 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
             // console.log(JSON.stringify(userInfo));
         })
@@ -146,7 +137,7 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
             // console.log(JSON.stringify(userInfo));
         })
@@ -170,7 +161,7 @@ export const AuthProvider = ({children}) => {
         .then(res =>{
             let userInfo = res.data;
             setUserInfo(userInfo);
-            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             setIsLoading(false);
             // console.log(JSON.stringify(userInfo)) ;
         })
@@ -208,17 +199,12 @@ export const AuthProvider = ({children}) => {
     const AddEmergencyContact = async (fname,lname,telNo) =>{
         setIsLoading(true)
 
-        console.log('Add emergency contact')
         let body ={
             emergency: {
-                name: toTitleCase(fname) + ' ' + toTitleCase(lname),
+                name: toCamelCase(fname) + ' ' + toCamelCase(lname),
                 phoneNum: telNo
             }
         }
-        const token = userInfo.token;
-        console.log(token)
-        // console.log(userInfo.token);
-        // console.log(JSON.stringify(body));
         const header ={
             headers: {'Authorization': `Bearer ${userInfo.token}`},
         }
@@ -227,16 +213,11 @@ export const AuthProvider = ({children}) => {
         .put(`${BASE_URL}/drivers/addemergency`,body,header)
         .then(res =>{
             let Info = res.data;
-            console.log('userInfo---------\n' + JSON.stringify(userInfo));
-            console.log('emergency---------\n' + JSON.stringify(Info.emergency));
-            // addEmergencyUserInfo("emergency", JSON.stringify(Info.emergency))
-            // setUserInfo({...userInfo, emergency : JSON.stringify(Info.emergency)})
-            // setUserInfo(async(prevState) => ({...prevState, "emergency": JSON.stringify(Info.emergency)}));
-            // userInfo = {...userInfo , JSON.stringify({"emergency" : {name : "Madushan"}})};
-            // setUserInfo({...userInfo, "emergency" : [{"A": 100}, {"B": 200}, {"C": 300}, {"D": 400}]})
-            // setUserInfo({"emergency":JSON.stringify(Info.emergency)})
-            console.log('newUserInfo---------\n' + JSON.stringify(userInfo));
-            // AsyncStorage.setItem('userInfo', JSON.stringify(Info));
+            const newEmergency = [...Info.emergency]
+            setUserInfo({
+            ...userInfo, 
+            emergency: newEmergency
+            });
             setIsLoading(false);
         })
         .catch(e =>{

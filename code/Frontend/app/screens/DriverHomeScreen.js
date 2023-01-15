@@ -18,15 +18,33 @@ import { Ionicons } from '@expo/vector-icons';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import ContactListCard from '../components/ContactListCard';
-import ProfilePic from '../assets/profPic/ProfilePic';
 import ModalPopUp from '../components/ModalPopUp';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { AuthContext } from '../context/AuthContext';
 
-const renderItem = ({ item }) => (
-    <ContactListCard name={item.name} telephoneNo={item.telephoneNo} image={item.image} />
-);
+let currentIndex = 0
+const profilePics = [
+    {
+        image: require('../assets/profPic/picture1.jpg'),
+    },
+    {
+        image: require('../assets/profPic/picture2.jpg'),
+    },
+    {
+        image: require('../assets/profPic/picture3.jpg'),
+    },     
+]
+
+const renderItem = ({ item }) => {
+    currentIndex = currentIndex + 1;
+    if (currentIndex == 3) {
+        currentIndex = 0
+    }
+    return (
+        <ContactListCard name={item.name} telephoneNo={item.phoneNum} image={profilePics[currentIndex].image} />
+    );
+};
 
 const DriverHomeScreen = ({navigation}) => {
 
@@ -39,7 +57,6 @@ const DriverHomeScreen = ({navigation}) => {
     // }, []);
 
     const [visible, setVisible] = useState(false);
-    const [list, setList] = useState(ProfilePic);
     const [modalInputs, setModalInputs] = useState({
         fname: '',
         lname: '',
@@ -47,7 +64,7 @@ const DriverHomeScreen = ({navigation}) => {
     });
     const [errors, setErrors] = useState({});
 
-    const { isLoading, AddEmergencyContact, toCamelCase } = useContext(AuthContext);
+    const { isLoading, userInfo, AddEmergencyContact } = useContext(AuthContext);
 
     const size = useWindowDimensions();
     const height = size.height + StatusBar.currentHeight + 13;
@@ -56,15 +73,6 @@ const DriverHomeScreen = ({navigation}) => {
         'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
         'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf'),
     });
-
-    const addContact = (name, tpNo) => {
-        const e = {
-            name: name,
-            telephoneNo: tpNo,
-            image: require('../assets/profPic/picture1.jpg'),
-        };
-        setList([...list, e]);
-    };
 
     const handleOnChange = (text, input) => {
         setModalInputs(prevState => ({...prevState, [input]: text}));
@@ -92,10 +100,7 @@ const DriverHomeScreen = ({navigation}) => {
         console.log(errors)
 
         if (valid) {
-            const name = toCamelCase(modalInputs.fname) + ' ' + toCamelCase(modalInputs.lname);
-            addContact(name, modalInputs.tpNo);
-            AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);  
-            console.log(name);
+            AddEmergencyContact(modalInputs.fname, modalInputs.lname, modalInputs.tpNo);
             setModalInputs({
                 fname: '',
                 lname: '',
@@ -224,9 +229,10 @@ const DriverHomeScreen = ({navigation}) => {
 
                     <View style={{flex: 1}}>
                         <FlatList style={{flex: 1}}
-                            data={list}
+                            // data={list}
+                            data={userInfo.emergency}
                             renderItem={renderItem}
-                            keyExtractor={item => item.telephoneNo}
+                            keyExtractor={item => item.phoneNum}
                         />
                     </View>
                 </ImageBackground>
