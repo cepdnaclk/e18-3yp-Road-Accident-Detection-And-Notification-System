@@ -1,4 +1,6 @@
 const EmergencyContact = require('../models/emergencyContactModel');
+const Driver = require('../models/driverModel');
+const ActiveCases = require('../models/activecasesModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -111,6 +113,58 @@ const updateMe = asyncHandler( async(req,res) =>{
  
 });
 
+// @desc Display an accident to emergency contacts
+// @route POST/api/emergencycontacts/accidents
+// @access Public
+const emergeAccident = asyncHandler( async(req,res) =>{
+   
+    const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
+
+    const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
+
+    const currentCase= await ActiveCases.findOne({"deviceNum":driver.deviceNum})
+    if(!currentCase){
+        res.status(201).json({state:"No Accident"})
+    }
+    else{
+
+        res.status(201).json({
+            state:"Accident",
+            longitude:currentCase.longitude,
+            latitude:currentCase.latitude,
+            ambulanceState:currentCase.state,
+            criticalState:currentCase.patientCondition
+        })
+    }
+
+ 
+});
+
+// @desc Send assigned driver details to emergency contacts
+// @route POST/api/emergencycontacts/details
+// @access Public
+const driverDetails = asyncHandler( async(req,res) =>{
+   
+    const emergencyContact = await EmergencyContact.findOne({"nic":req.body.nic})
+
+    const driver = await Driver.findById({"_id":emergencyContact.driver[0]})
+
+    if(!driver){
+        res.status(201).json({state:"No driver assigned to emergency contact"})
+    }
+    else{
+
+        res.status(201).json({
+            fname:driver.fname,
+            lname:driver.lname,
+            nic:driver.nic,
+            telNum:driver.telNum
+
+        })
+    }
+
+ 
+});
 
 //Generate JWT
 const generateToken = (id) =>{
@@ -124,5 +178,7 @@ module.exports = {
     loginEmergencyContact,
     getMe,
     removeMe,
-    updateMe
+    updateMe,
+    emergeAccident,
+    driverDetails
 }

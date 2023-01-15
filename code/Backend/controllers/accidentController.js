@@ -24,6 +24,7 @@ const addAccident =asyncHandler(async(req,res) =>{
         const latitude=req.body.latitude;
         const longitude=req.body.longitude;
         const deviceNum=req.body.deviceNum;
+        const patientCondition=req.body.activeState;
 
 
         const find_ambulances = await Ambulance.aggregate([
@@ -50,7 +51,9 @@ const addAccident =asyncHandler(async(req,res) =>{
                 deviceNum,
                 longitude, 
                 latitude,
-                state:"Active"
+                state:"Active",
+                patientCondition:patientCondition
+
                 
             });
 
