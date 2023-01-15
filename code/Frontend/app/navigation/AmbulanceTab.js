@@ -12,7 +12,9 @@ function AmbulanceTabs() {
       initialRouteName="Home"
       screenOptions= {{ 
         headerShown: false,
-        tabBarActiveTintColor: '#0497E0',
+        // tabBarActiveTintColor: '#0497E0',
+        // tabBraInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#4B517C',
         tabBraInactiveTintColor: 'gray',
         
         tabBarShowLabel: false,

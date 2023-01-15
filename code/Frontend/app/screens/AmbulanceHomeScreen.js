@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, StatusBar, TouchableOpacity, Image, Animated, Text } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
 import { SwipeButton } from 'react-native-expo-swipe-button';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5, Octicons, Feather } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
 import { AuthContext } from '../context/AuthContext';
@@ -361,6 +360,9 @@ const mapStyle = [
 //     }
 //   ]
 
+let paddingval = 8
+let bgCol = 'rgba(90, 93, 125, 0.55)'
+
 function AmbulanceHome({navigation}) {
 
     const [origin, setOrigin] = useState({
@@ -374,6 +376,26 @@ function AmbulanceHome({navigation}) {
     });
     const [state, setState] = useState(0);
 
+    const [boxHeight, setBoxHeight] = useState(new Animated.Value(60));
+    const [expanded, setExpanded] = useState(false);
+
+    const handlePress = () => {
+      if (!expanded) {
+        Animated.timing(boxHeight, {
+          toValue: 170,
+          duration: 300,
+          useNativeDriver: false
+        }).start();
+      } else {
+        Animated.timing(boxHeight, {
+          toValue: 60,
+          duration: 300,
+          useNativeDriver: false
+        }).start();
+      }
+      setExpanded(!expanded);
+    }
+
     const [fontsLoaded] = useFonts({
       'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
     });
@@ -386,22 +408,86 @@ function AmbulanceHome({navigation}) {
       }, 10000);
     }, []);
 
+    // useEffect(() => {
+    //   setInterval(() => {
+    //    console.log('1');
+    //   }, 1000);
+    // }, []);
+
     if (!fontsLoaded) {
       return null;
     }
     
     return (
         <View style={styles.container}>
-            <View style={styles.topPanel}>
-                <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
-                <TouchableOpacity 
-                    // onPress={() => navigation.navigate('Welcome')}
-                    onPress={() => console.log('back-ambulance')}
-                    style={styles.back}>
+            {/* <View style={styles.topPanel}> */}
+            <Animated.View style={[styles.topPanel, {height: boxHeight, backgroundColor: expanded ? 'rgba(90, 93, 125, 0.9)' : 'rgba(90, 93, 125, 0.7)'}]}>
+              {expanded ? (
+                <View style={styles.patientCard}>
+                  <View style={{width: '100%', height: '100%'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', height: '66%'}}>
+                      <View style={{flexDirection: 'column', alignItems: 'center', width:85 , height: '100%', justifyContent: 'center'}}>
+                        <View style={styles.profilePic}>
+                          <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={require('../assets/profPic/picture3.jpg')}/>
+                        </View>
+                        <View style={{backgroundColor: '#FF6161', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
+                      </View>
+                      <View style={{flex: 1, height: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
+                            <FontAwesome5 name="user-injured" size={15} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Firstname Lastname</Text>
+                        </View>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
+                            <FontAwesome name="drivers-license-o" size={14} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>NIC-number</Text>
+                        </View>
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                          <View style={{justifyContent:'center', alignItems: 'center',  width: 20, height: 20, marginHorizontal: 16}}>
+                            <Octicons name="number" size={17} color="#a9a9a9" />
+                          </View>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Plate-number</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 8, paddingRight: 2, width: '100%', height: '27%', marginTop: '3%'}}>
+                      <View>
+                        <Text style={{fontFamily: 'YanoneKaff', fontSize: 20, color: '#C2C2C2', marginTop: 5}}>13 min (9.5 km)</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', width: 97, justifyContent: 'space-between'}}>
+                        <TouchableOpacity 
+                          // onPress={() => navigation.navigate('Welcome')}
+                          onPress={handlePress}
+                          style={{height: '100%', width: 46, borderRadius: 10, backgroundColor: '#2D2B4B', justifyContent: 'center', alignItems: 'center'}}>
+                          <Feather name="phone-call" size={21} color="#B5B5B5" />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                          // onPress={() => navigation.navigate('Welcome')}
+                          onPress={handlePress}
+                          style={{height: '100%', width: 46, borderRadius: 10, backgroundColor: '#2D2B4B', justifyContent: 'center', alignItems: 'center'}}>
+                          <FontAwesome5 name="sync" size={21} color="#B5B5B5" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
+                  <TouchableOpacity 
+                      // onPress={() => navigation.navigate('Welcome')}
+                      onPress={handlePress}
+                      style={styles.back}>
 
-                    <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
-                </TouchableOpacity>
-            </View>
+                      <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
+                  </TouchableOpacity>
+                </>
+              )}
+            </Animated.View>
+            {/* </View> */}
             <MapView 
                 style={styles.map}
                 customMapStyle={mapStyle}
@@ -423,7 +509,7 @@ function AmbulanceHome({navigation}) {
                 
             </MapView>
             <View style={styles.bottom}>
-              <SwipeButton
+              {/* <SwipeButton
                 Icon={
                   <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
                 }
@@ -431,15 +517,36 @@ function AmbulanceHome({navigation}) {
                 width= {280}
                 circleSize={73}
                 circleBackgroundColor='#2B2A46'
-                onComplete={() => {console.log('Success!')}}
+                onComplete={() => {console.log('Success!'); handlePress()}}
                 containerStyle={{
                   backgroundColor: 'rgba(90, 93, 125, 0.8)',
+                  alignItems: 'center',
                 }}
                 title="Slide to pick the patient"
-                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18 }}
+                titleStyle={{ color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18, textAlign: 'center' }}
                 borderRadius={180}
                 underlayTitle="Release to complete"
                 underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
+              /> */}
+              <SwipeButton
+                Icon={
+                  <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
+                }
+                width= {280}
+                // circleSize={60}
+                // goBackToStart={false}
+                completeThresholdPercentage={50}
+                onComplete={() => console.log('Success!')}
+                title="Slide to pick the patient"
+                titleStyle={{color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18}}
+                titleContainerStyle={{marginLeft: 'auto', width: '90%'}}
+                borderRadius={180}
+                containerStyle={{ backgroundColor: 'rgba(90, 93, 125, 0.8)' }}
+                underlayStyle={{backgroundColor: 'rgba(90, 93, 125, 1)'}}
+                underlayTitle="Slide to complete the Job"
+                underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18}}
+                underlayTitleContainerStyle={{width: '80%'}}
+                circleBackgroundColor='#2B2A46'
               />
             </View>
             <ExpoStatusBar style='light'/>
@@ -456,15 +563,29 @@ const styles = StyleSheet.create({
     topPanel: {
         position: 'absolute',
         zIndex: 10,
-        height: '8%',
-        width: '95%',
-        backgroundColor: 'rgba(90, 93, 125, 0.55)',
+        width: '92%',
         borderRadius: 15,
         top: StatusBar.currentHeight,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingRight: 8,
+        paddingRight: paddingval,
+    },
+    patientCard: {
+        margin: 4,
+        borderRadius: 15,
+        height: '100%',
+        width: '100%',
+        // backgroundColor: 'red',
+        paddingHorizontal: '9%',
+        paddingVertical: '3%',
+        paddingTop: '5%'
+    },
+    profilePic: {
+        height: 70,
+        width: 70,
+        backgroundColor: 'rgba(90, 93, 125, 0.9)',
+        borderRadius: 15
     },
     map: {
         width: '100%',
