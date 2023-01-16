@@ -364,17 +364,18 @@ let paddingval = 8
 let bgCol = 'rgba(90, 93, 125, 0.55)'
 
 function AmbulanceHome({navigation}) {
-
-    const [origin, setOrigin] = useState({
-        latitude: 6.12646,
-        longitude: 80.20395,
-    });
-
-    const [destination, setDestination] = useState({
-        latitude: 6.13235,
-        longitude: 80.21062,
-    });
-    const [state, setState] = useState(0);
+  const { GetAccidentLocation, updateAmbLocation, accidentState } = useContext(AuthContext);
+  
+  const [origin, setOrigin] = useState({
+    latitude: 6.12646,
+    longitude: 80.20395,
+  });
+  
+  const [destination, setDestination] = useState({
+    latitude: 6.13235,
+    longitude: 80.21062,
+  });
+  const [state, setState] = useState(0);
 
     const [boxHeight, setBoxHeight] = useState(new Animated.Value(60));
     const [expanded, setExpanded] = useState(false);
@@ -400,13 +401,27 @@ function AmbulanceHome({navigation}) {
       'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf')
     });
 
-    const { GetAccidentLocation } = useContext(AuthContext);
 
     useEffect(() => {
       setTimeout(() => {
        setState(1);
       }, 10000);
     }, []);
+
+    useEffect(() => {
+      setInterval(() => {
+        updateAmbLocation(13,16)
+        GetAccidentLocation("154879")
+      }, 3000);
+    }, [])
+
+    // useEffect(() => {
+    //   updateAmbLocation(origin.latitude, origin.longitude)
+    // }, [origin])
+
+    useEffect(() => {
+      console.log(accidentState);
+    }, [accidentState])
 
     // useEffect(() => {
     //   setInterval(() => {
@@ -534,9 +549,14 @@ function AmbulanceHome({navigation}) {
                 }
                 width= {280}
                 // circleSize={60}
-                // goBackToStart={false}
+                goBackToStart={false}
                 completeThresholdPercentage={50}
-                onComplete={() => console.log('Success!')}
+                onComplete={() => {
+                  console.log('Success!'); 
+                  setOrigin({
+                    latitude: origin.latitude + 1,
+                    longitude: origin.longitude + 1
+                  })}}
                 title="Slide to pick the patient"
                 titleStyle={{color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18}}
                 titleContainerStyle={{marginLeft: 'auto', width: '90%'}}

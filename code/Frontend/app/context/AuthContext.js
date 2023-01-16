@@ -9,17 +9,10 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [accidentState, setAccidentState] = useState('Not Active');
+    const [accidentState, setAccidentState] = useState('Invalid');
 
     useEffect(() => {
         loadUserInfo()
-        setInterval(() => {
-            if (userInfo.userState === 0) {
-                // updateAmbLocation(12,15)
-                // GetAccidentLocation("154879")
-                // console.log(accidentState);
-            }
-        }, 1000);
     }, [])
 
     useEffect(()=>{
@@ -256,10 +249,10 @@ export const AuthProvider = ({children}) => {
         .post(`${BASE_URL}/ambulances/findaccident`,body)
         .then(res =>{
             let { state } = res.data;
+            // console.log(state)
             setAccidentState(state);
             // setUserInfo(userInfo);
             // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-            // console.log(state);
         })
         .catch(e =>{
             console.log(`get accident error ${e}`);
