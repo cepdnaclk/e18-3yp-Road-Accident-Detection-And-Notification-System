@@ -1,5 +1,5 @@
 #include <LiquidCrystal_I2C.h>
-//#include <TinyGPS++.h>
+// #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 #include <math.h>
 #include <Wire.h>
@@ -22,8 +22,8 @@ SoftwareSerial SIM800(13, 12);
 //--------------------------------------------------------------
 // GPS Module RX pin to Arduino 18
 // GPS Module TX pin to Arduino 5
-//SoftwareSerial neogps(18,5);
-//TinyGPSPlus gps;
+// SoftwareSerial neogps(18,5);
+// TinyGPSPlus gps;
 //--------------------------------------------------------------
 #define xPin 34
 #define yPin 35
@@ -45,7 +45,7 @@ String activeState = "accident";
 int xaxis = 0, yaxis = 0, zaxis = 0;
 int vibration = 15, devibrate = 150;
 int magnitude = 0;
-int sensitivity = 600;
+int sensitivity = 550;
 boolean isAccidentDetected = false;
 boolean isDataSentSuccessfully = false;
 String critical_level = "";
@@ -57,9 +57,9 @@ unsigned long time1;
 // unsigned long alert_delay = 30000; // 30 seconds
 //--------------------------------------------------------------
 
-const char* ssid = "SHEHAN";
-const char* password = "123456789";
-const char* serverName = "http://54.255.195.190:5000/api/accident";
+const char *ssid = "SHEHAN";
+const char *password = "123456789";
+const char *serverName = "http://54.255.195.190:5000/api/accident";
 unsigned long lastTime = 0;
 String payload = "{}";
 unsigned long previousMillis = 0;
@@ -89,7 +89,7 @@ void setup()
     //--------------------------------------------------------------
     SIM800.begin(9600);
     //--------------------------------------------------------------
-//    neogps.begin(9600);
+    //    neogps.begin(9600);
     //--------------------------------------------------------------
     pinMode(BUZZER, OUTPUT);
     pinMode(GREEN_BUTTON, INPUT);
@@ -111,7 +111,7 @@ void setup()
         gprs_connect();
     }
 
-    //init_gps();
+    // init_gps();
 
     Serial.println(WiFi.status());
     init_wifi();
@@ -122,14 +122,14 @@ void setup()
     yaxis = analogRead(yPin);
     zaxis = analogRead(zPin);
 
-    //Serial.println(String(xaxis)+" "+String(yaxis)+" "+String(zaxis)+" ");
+    // Serial.println(String(xaxis)+" "+String(yaxis)+" "+String(zaxis)+" ");
     //--------------------------------------------------------------
 
-     lcd.clear();
-     lcd.setCursor(4,0);
-     lcd.print("PROTEGO");
-     lcd.setCursor(2,1);
-     lcd.print("DRIVE SAFE!");
+    lcd.clear();
+    lcd.setCursor(4, 0);
+    lcd.print("PROTEGO");
+    lcd.setCursor(2, 1);
+    lcd.print("DRIVE SAFE!");
 }
 
 /*****************************************************************************************
@@ -166,7 +166,7 @@ void loop()
         lcd.print("Critical Level");
         delay(3000);
 
-        //getGps();
+        // getGps();
         criticalLevel();
 
         lcd.clear();
@@ -175,74 +175,79 @@ void loop()
         lcd.setCursor(0, 1);
         lcd.print(critical_level);
 
-        //impact_detected = true;
-        //impact_time = millis();
+        // impact_detected = true;
+        // impact_time = millis();
     }
 
     if (critical_level == "HIGH CRITICAL" && isDataSentSuccessfully == false)
     {
 
-//        String sendtoserver_data;
-//        sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
-//        sendtoserver_data = "";
-//
-//        Serial.println(sendtoserver_data);
+        //        String sendtoserver_data;
+        //        sendtoserver_data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
+        //        sendtoserver_data = "";
+        //
+        //        Serial.println(sendtoserver_data);
 
-//        while (!is_gprs_connected())
-//        {
-//            gprs_connect();
-//        }
-//
-//        while (true)
-//        {
-//            sendToServer();
-//            delay(4000);
-//        }
+        //        while (!is_gprs_connected())
+        //        {
+        //            gprs_connect();
+        //        }
+        //
+        //        while (true)
+        //        {
+        //            sendToServer();
+        //            delay(4000);
+        //        }
 
-          // send data through wifi to the end point. check the status code. if the status code is not 200, then send again.
-          // collect the emergency contacts numbers from the response.
-          // send sms to that numbers using gsm.
-          // put relevent lcd display msgs and delays.
-          // what happend next?
-          lcd.clear();
-          lcd.setCursor(0,0);
-          lcd.print("Sending Data");
-          lcd.setCursor(0,1);
-          lcd.print("To The Server");
-          int res = sendToServer_wifi();
-          Serial.println(res);
-          Serial.println(payload);
-          delay(5000);
-          
-            if(res == 200 || res == 401){
+        // send data through wifi to the end point. check the status code. if the status code is not 200, then send again.
+        // collect the emergency contacts numbers from the response.
+        // send sms to that numbers using gsm.
+        // put relevent lcd display msgs and delays.
+        // what happend next?
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Sending Data");
+        lcd.setCursor(0, 1);
+        lcd.print("To The Server...");
+        int res = sendToServer_wifi();
+        Serial.println(res);
+        Serial.println(payload);
+        delay(5000);
+
+        if (res == 200 || res == 401)
+        {
             lcd.clear();
-            lcd.setCursor(0,0);
-            lcd.print("Data Sent Successfully");
+            lcd.setCursor(0, 0);
+            lcd.print("Data Sent");
+            lcd.setCursor(0, 1);
+            lcd.print("Successfully....");
 
             delay(5000);
             lcd.clear();
-            lcd.setCursor(4,0);
+            lcd.setCursor(4, 0);
             lcd.print("PROTEGO");
-            lcd.setCursor(2,1);
+            lcd.setCursor(2, 1);
             lcd.print("DRIVE SAFE!");
             isDataSentSuccessfully = true;
-         }
-         
-          else{
+        }
+
+        else
+        {
             lcd.clear();
-            lcd.setCursor(0,0);
+            lcd.setCursor(0, 0);
             lcd.print("Data Cannot Sent");
             delay(5000);
             lcd.clear();
-            lcd.setCursor(0,0);
+            lcd.setCursor(0, 0);
             lcd.print("Connecting To");
-            lcd.setCursor(0,1);
+            lcd.setCursor(0, 1);
             lcd.print("Server Again....");
             delay(5000);
         }
-
-    } else{
-    }   
+    }
+    else
+    {
+    }
 }
 
 /*****************************************************************************************
@@ -250,7 +255,7 @@ void loop()
  *****************************************************************************************/
 void Impact()
 {
-    //Serial.println("Impact started");
+    // Serial.println("Impact started");
     //--------------------------------------------------------------
     time1 = micros(); // resets time value
     //--------------------------------------------------------------
@@ -262,9 +267,8 @@ void Impact()
     yaxis = analogRead(yPin);
     zaxis = analogRead(zPin);
 
-    //Serial.println(String(oldx)+" "+String(oldy)+" "+String(oldz)+" ");
-   // Serial.println(String(xaxis)+" "+String(yaxis)+" "+String(zaxis)+" ");
-    
+    // Serial.println(String(oldx)+" "+String(oldy)+" "+String(oldz)+" ");
+    // Serial.println(String(xaxis)+" "+String(yaxis)+" "+String(zaxis)+" ");
 
     //--------------------------------------------------------------
     // loop counter prevents false triggering. Vibration resets if there is an impact. Don't detect new changes until that "time" has passed.
@@ -280,8 +284,8 @@ void Impact()
 
     // Magnitude to calculate force of impact.
     magnitude = sqrt(sq(xaxis - oldx) + sq(yaxis - oldy) + sq(zaxis - oldz));
-    //Serial.println(magnitude);
-    // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    // Serial.println(magnitude);
+    //  NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
     if (magnitude >= sensitivity) // impact detected
     {
         isAccidentDetected = true;
@@ -300,80 +304,83 @@ void Impact()
     // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 }
 
-
 /*****************************************************************************************
  * init_wifi() function
  *****************************************************************************************/
-void init_wifi(){
+void init_wifi()
+{
 
-//  if(WiFi.status() == WL_CONNECTED){
-//    WiFi.disconnect();
-//    delay(2000);
-//    Serial.print("Wifi disconnected");
-//  }
-  
-  WiFi.mode(WIFI_OFF);
-  delay(1000);
-  WiFi.mode(WIFI_STA);
-  delay(1000);
-  WiFi.begin(ssid, password);
-  delay(1000);
-  Serial.println("Connecting to Wifi");
-  while(WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+    //  if(WiFi.status() == WL_CONNECTED){
+    //    WiFi.disconnect();
+    //    delay(2000);
+    //    Serial.print("Wifi disconnected");
+    //  }
+
+    WiFi.mode(WIFI_OFF);
+    delay(1000);
+    WiFi.mode(WIFI_STA);
+    delay(1000);
+    WiFi.begin(ssid, password);
+    delay(1000);
+    Serial.println("Connecting to Wifi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("");
+    Serial.print("Connected to WiFi network with IP Address: ");
+    Serial.println(WiFi.localIP());
 }
-
 
 /*****************************************************************************************
  * sendToServer_wifi() function
  *****************************************************************************************/
-int sendToServer_wifi(){
-   unsigned long currentMillis = millis();
-  // if WiFi is down, try reconnecting every CHECK_WIFI_TIME seconds
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >=interval)) {
-    Serial.print(millis());
-    Serial.println("Reconnecting to WiFi...");
-    WiFi.disconnect();
-    delay(1000);
-    WiFi.reconnect();
-    delay(1000);
-    previousMillis = currentMillis;
-  }
-  
-  int httpResponseCode;
-  if(WiFi.status()== WL_CONNECTED){
-      WiFiClient client;
-      HTTPClient http;
-    
-      // Your Domain name with URL path or IP address with path
-      http.begin(client, serverName);
-      delay(1000);
-      http.addHeader("Content-Type", "application/json");
-      delay(1000);
-      String data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
-      httpResponseCode  = http.POST(data);
-      delay(1000);
-
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
-      
-      payload = http.getString();
-      delay(1000);
-      // Free resources
-      http.end();
-      delay(1000);
+int sendToServer_wifi()
+{
+    unsigned long currentMillis = millis();
+    // if WiFi is down, try reconnecting every CHECK_WIFI_TIME seconds
+    if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval))
+    {
+        Serial.print(millis());
+        Serial.println("Reconnecting to WiFi...");
+        WiFi.disconnect();
+        delay(1000);
+        WiFi.reconnect();
+        delay(1000);
+        previousMillis = currentMillis;
     }
-    else {
-      Serial.println("WiFi Disconnected");
+
+    int httpResponseCode;
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        WiFiClient client;
+        HTTPClient http;
+
+        // Your Domain name with URL path or IP address with path
+        http.begin(client, serverName);
+        delay(1000);
+        http.addHeader("Content-Type", "application/json");
+        delay(1000);
+        String data = "{\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\",\"deviceNum\":\"" + deviceID + "\",\"activeState\":\"" + activeState + "\"}";
+        httpResponseCode = http.POST(data);
+        delay(1000);
+
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+
+        payload = http.getString();
+        delay(1000);
+        // Free resources
+        http.end();
+        delay(1000);
+    }
+    else
+    {
+        Serial.println("WiFi Disconnected");
     }
     return httpResponseCode;
 }
-
 
 /*****************************************************************************************
  * sendToServer_gprs() function
@@ -437,37 +444,37 @@ void sendToServer_gprs()
  *****************************************************************************************/
 void getGps()
 {
-//    // Can take up to 60 seconds
-//    boolean newData = false;
-//    for (unsigned long start = millis(); millis() - start < 2000;)
-//    {
-//        while (neogps.available())
-//        {
-//            if (gps.encode(neogps.read()))
-//            {
-//                newData = true;
-//                break;
-//            }
-//        }
-//    }
-//
-//    if (newData) // If newData is true
-//    {
-//        latitude = String(gps.location.lat(), 6);
-//        longitude = String(gps.location.lng(), 6);
-//        newData = false;
-//    }
-//    else
-//    {
-//        Serial.println("No GPS data is available");
-//        latitude = "";
-//        longitude = "";
-//    }
-//
-//    Serial.print("Latitude= ");
-//    Serial.println(latitude);
-//    Serial.print("Logitude= ");
-//    Serial.println(longitude);
+    //    // Can take up to 60 seconds
+    //    boolean newData = false;
+    //    for (unsigned long start = millis(); millis() - start < 2000;)
+    //    {
+    //        while (neogps.available())
+    //        {
+    //            if (gps.encode(neogps.read()))
+    //            {
+    //                newData = true;
+    //                break;
+    //            }
+    //        }
+    //    }
+    //
+    //    if (newData) // If newData is true
+    //    {
+    //        latitude = String(gps.location.lat(), 6);
+    //        longitude = String(gps.location.lng(), 6);
+    //        newData = false;
+    //    }
+    //    else
+    //    {
+    //        Serial.println("No GPS data is available");
+    //        latitude = "";
+    //        longitude = "";
+    //    }
+    //
+    //    Serial.print("Latitude= ");
+    //    Serial.println(latitude);
+    //    Serial.print("Logitude= ");
+    //    Serial.println(longitude);
 }
 
 /*****************************************************************************************
@@ -475,32 +482,32 @@ void getGps()
  *****************************************************************************************/
 void criticalLevel()
 {
-//    for (unsigned long start = millis(); millis() - start < 10000;)
-//    {
-//        if (digitalRead(GREEN_BUTTON) == HIGH)
-//        {
-//            critical_level = "FALSE ALARM";
-//            Serial.println("GREEN");
-//            digitalWrite(BUZZER, LOW);
-//            return;
-//        }
-//        else if (digitalRead(BLUE_BUTTON) == HIGH)
-//        {
-//            critical_level = "Mild CRITICAL";
-//            activeState = "Mild CRITICAL";
-//            Serial.println("BLUE");
-//            digitalWrite(BUZZER, LOW);
-//            return;
-//        }
-//        else if (digitalRead(RED_BUTTON) == HIGH)
-//        {
-//            critical_level = "HIGH CRITICAL";
-//            activeState = "HIGH CRITICAL";
-//            Serial.println("RED");
-//            digitalWrite(BUZZER, LOW);
-//            return;
-//        }
-//    }
+    //    for (unsigned long start = millis(); millis() - start < 10000;)
+    //    {
+    //        if (digitalRead(GREEN_BUTTON) == HIGH)
+    //        {
+    //            critical_level = "FALSE ALARM";
+    //            Serial.println("GREEN");
+    //            digitalWrite(BUZZER, LOW);
+    //            return;
+    //        }
+    //        else if (digitalRead(BLUE_BUTTON) == HIGH)
+    //        {
+    //            critical_level = "Mild CRITICAL";
+    //            activeState = "Mild CRITICAL";
+    //            Serial.println("BLUE");
+    //            digitalWrite(BUZZER, LOW);
+    //            return;
+    //        }
+    //        else if (digitalRead(RED_BUTTON) == HIGH)
+    //        {
+    //            critical_level = "HIGH CRITICAL";
+    //            activeState = "HIGH CRITICAL";
+    //            Serial.println("RED");
+    //            digitalWrite(BUZZER, LOW);
+    //            return;
+    //        }
+    //    }
     critical_level = "HIGH CRITICAL";
     digitalWrite(BUZZER, LOW);
 }
@@ -510,46 +517,46 @@ void criticalLevel()
  *****************************************************************************************/
 void init_gps()
 {
-//    lcd.clear();
-//    lcd.setCursor(1, 0);
-//    lcd.print("Connecting GPS");
-//    lcd.setCursor(0, 1);
-//
-//    for (int i = 0; i < 16; i++)
-//    {
-//        lcd.print(".");
-//        delay(200);
-//    }
-//
-//    while (true)
-//    {
-//        while (neogps.available() > 0)
-//        {
-//            if (gps.encode(neogps.read()))
-//            {
-//                if (gps.location.isValid())
-//                {
-//                    // Serial.print(gps.location.lat(), 6);
-//                    // Serial.print(F(","));
-//                    // Serial.print(gps.location.lng(), 6);
-//                    // Serial.println();
-//
-//                    lcd.clear();
-//                    lcd.setCursor(1, 0);
-//                    lcd.print("GPS Connected!");
-//                    delay(5000);
-//                    return;
-//                }
-//            }
-//        }
-//    }
-//
-//    if (millis() > 5000 && gps.charsProcessed() < 10)
-//    {
-//        // lcd.print("NO GPS : Check Wiring");
-//        Serial.println(F("No GPS detected: check wiring."));
-//        while (true);
-//    }
+    //    lcd.clear();
+    //    lcd.setCursor(1, 0);
+    //    lcd.print("Connecting GPS");
+    //    lcd.setCursor(0, 1);
+    //
+    //    for (int i = 0; i < 16; i++)
+    //    {
+    //        lcd.print(".");
+    //        delay(200);
+    //    }
+    //
+    //    while (true)
+    //    {
+    //        while (neogps.available() > 0)
+    //        {
+    //            if (gps.encode(neogps.read()))
+    //            {
+    //                if (gps.location.isValid())
+    //                {
+    //                    // Serial.print(gps.location.lat(), 6);
+    //                    // Serial.print(F(","));
+    //                    // Serial.print(gps.location.lng(), 6);
+    //                    // Serial.println();
+    //
+    //                    lcd.clear();
+    //                    lcd.setCursor(1, 0);
+    //                    lcd.print("GPS Connected!");
+    //                    delay(5000);
+    //                    return;
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    if (millis() > 5000 && gps.charsProcessed() < 10)
+    //    {
+    //        // lcd.print("NO GPS : Check Wiring");
+    //        Serial.println(F("No GPS detected: check wiring."));
+    //        while (true);
+    //    }
 }
 
 /*****************************************************************************************
