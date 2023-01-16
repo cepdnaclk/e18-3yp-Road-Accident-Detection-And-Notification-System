@@ -24,7 +24,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 const SignUpScreen = ({navigation}) => {
     
     const size = useWindowDimensions();
-    const height = size.height + StatusBar.currentHeight + 13;
+    const height = size.height;
     
     const [state, setState] = useState(1);  // 0 -> Ambulance, 1 -> Driver, 2 -> Emergency
     const [inputs, setInputs] = useState({

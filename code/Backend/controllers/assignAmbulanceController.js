@@ -30,7 +30,7 @@ const assignAmbulance = asyncHandler(async (req, res) => {
             lname:personal.lname,
             phoneNum:personal.telNum,
             patientCondition:activeCase.patientCondition,
-            nic:activeCase.nic
+            nic:personal.nic
 
         })
     }
