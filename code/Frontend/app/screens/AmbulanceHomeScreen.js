@@ -364,37 +364,39 @@ let paddingval = 8
 let bgCol = 'rgba(90, 93, 125, 0.55)'
 
 function AmbulanceHome({navigation}) {
-  const { GetAccidentLocation, updateAmbLocation, accidentState } = useContext(AuthContext);
+  const { GetAccidentLocation, updateAmbLocation, accidentState, userInfo, AcceptAccident, cardDetails, ResponseAccident } = useContext(AuthContext);
   
-  const [origin, setOrigin] = useState({
-    latitude: 6.12646,
-    longitude: 80.20395,
-  });
-  
-  const [destination, setDestination] = useState({
-    latitude: 6.13235,
-    longitude: 80.21062,
-  });
-  const [state, setState] = useState(0);
+    const [origin, setOrigin] = useState({
+      latitude: 6.12646,
+      longitude: 80.20395,
+    });
+    
+    const [destination, setDestination] = useState({
+      latitude: 6.13235,
+      longitude: 80.21062,
+    });
+    const [state, setState] = useState(0);
 
     const [boxHeight, setBoxHeight] = useState(new Animated.Value(60));
     const [expanded, setExpanded] = useState(false);
 
     const handlePress = () => {
-      if (!expanded) {
+      if (!expanded && accidentState === 'Active') {
         Animated.timing(boxHeight, {
           toValue: 170,
           duration: 300,
           useNativeDriver: false
         }).start();
-      } else {
+        setExpanded(!expanded);
+    } else if (expanded && accidentState === 'Assigned') {
         Animated.timing(boxHeight, {
           toValue: 60,
           duration: 300,
           useNativeDriver: false
         }).start();
+        setExpanded(!expanded);
       }
-      setExpanded(!expanded);
+      // setExpanded(!expanded);
     }
 
     const [fontsLoaded] = useFonts({
@@ -409,25 +411,25 @@ function AmbulanceHome({navigation}) {
     }, []);
 
     useEffect(() => {
-      setInterval(() => {
-        updateAmbLocation(13,16)
-        GetAccidentLocation("154879")
-      }, 3000);
-    }, [])
+      updateAmbLocation(origin.latitude, origin.longitude)
+    }, [origin])
 
-    // useEffect(() => {
-    //   updateAmbLocation(origin.latitude, origin.longitude)
-    // }, [origin])
+    useEffect(() => {
+      const id = setInterval(() => {
+        // updateAmbLocation(13,16)
+        const plateNum = userInfo.lisencePlateNum
+        GetAccidentLocation(plateNum)
+        // console.log('repeated')
+      }, 3000);
+
+      // if (userInfo.state === 1 || userInfo.state === 2) {
+      //   clearInterval(id)
+      // }
+    }, [])
 
     useEffect(() => {
       console.log(accidentState);
-      if (accidentState === 'Not Active') {
-        
-      } else if (accidentState === 'Active') {
-        handlePress()
-      } else if (accidentState === 'Assigned') {
-        handlePress()
-      }
+      handlePress()
     }, [accidentState])
 
     // useEffect(() => {
@@ -452,26 +454,26 @@ function AmbulanceHome({navigation}) {
                         <View style={styles.profilePic}>
                           <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={require('../assets/profPic/picture3.jpg')}/>
                         </View>
-                        <View style={{backgroundColor: '#FF6161', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
+                        <View style={{backgroundColor: cardDetails.patientCondition === 'Active-critical' ? '#FF6161' : '#FFFFFF', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
                       </View>
                       <View style={{flex: 1, height: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
                           <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
                             <FontAwesome5 name="user-injured" size={15} color="#a9a9a9" />
                           </View>
-                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Firstname Lastname</Text>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>{cardDetails.name ? cardDetails.name : 'FirstName LastName'}</Text>
                         </View>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
                           <View style={{justifyContent:'center', alignItems: 'center', width: 20, height: 20, marginHorizontal: 16}}>
                             <FontAwesome name="drivers-license-o" size={14} color="#a9a9a9" />
                           </View>
-                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>NIC-number</Text>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>{cardDetails.nic ? cardDetails.nic : 'NIC-number'}</Text>
                         </View>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
                           <View style={{justifyContent:'center', alignItems: 'center',  width: 20, height: 20, marginHorizontal: 16}}>
                             <Octicons name="number" size={17} color="#a9a9a9" />
                           </View>
-                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>Plate-number</Text>
+                          <Text style={{fontFamily: 'YanoneKaff', fontSize: 21, color: '#E1E1E1', letterSpacing: 0.9}}>{cardDetails.plateNum ? cardDetails.plateNum : 'Plate-number'}</Text>
                         </View>
                       </View>
                     </View>
@@ -501,7 +503,7 @@ function AmbulanceHome({navigation}) {
                   <Image style={{marginTop: 6}} source={require('../assets/img/LogoAmbulance.png')} />
                   <TouchableOpacity 
                       // onPress={() => navigation.navigate('Welcome')}
-                      onPress={handlePress}
+                      onPress={() => {}}
                       style={styles.back}>
 
                       <Ionicons name="md-chevron-back" size={35} color="#B5B5B5" />
@@ -557,14 +559,15 @@ function AmbulanceHome({navigation}) {
                   }
                   width= {280}
                   // circleSize={60}
-                  goBackToStart={false}
+                  goBackToStart={true}
                   completeThresholdPercentage={50}
                   onComplete={() => {
-                    console.log('Success!'); 
-                    setOrigin({
-                      latitude: origin.latitude + 1,
-                      longitude: origin.longitude + 1
-                    })}}
+                    AcceptAccident(userInfo.lisencePlateNum)
+                    // setOrigin({
+                    //   latitude: origin.latitude + 1,
+                    //   longitude: origin.longitude + 1
+                    // })
+                  }}
                   title="Slide to pick the patient"
                   titleStyle={{color: '#F4F4F4', fontFamily: 'YanoneKaff', fontSize: 18}}
                   titleContainerStyle={{marginLeft: 'auto', width: '90%'}}
@@ -576,6 +579,15 @@ function AmbulanceHome({navigation}) {
                   underlayTitleContainerStyle={{width: '80%'}}
                   circleBackgroundColor='#2B2A46'
                 />
+              ) : accidentState === 'Assigned' ? (
+                <TouchableOpacity 
+                    onPress={() => {
+                      ResponseAccident(userInfo.lisencePlateNum);
+                    }}
+                    style={{width: 180, height: 45, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(90, 93, 125, 0.8)'}}>
+
+                    <Text style={{fontFamily: 'YanoneKaff', fontSize: 20, letterSpacing: 0.7, color: '#E1E1E1'}}>Arrived at the hospital</Text>
+                </TouchableOpacity>
               ) : (
                 null
               )}
