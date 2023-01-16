@@ -13,6 +13,13 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         loadUserInfo()
+        setInterval(() => {
+            if (userInfo.userState === 0) {
+                // updateAmbLocation(12,15)
+                // GetAccidentLocation("154879")
+                // console.log(accidentState);
+            }
+        }, 1000);
     }, [])
 
     useEffect(()=>{
@@ -20,15 +27,18 @@ export const AuthProvider = ({children}) => {
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     },[userInfo])
 
-    useEffect(() => {
-        setInterval(() => {
-            if (userInfo.userState === 0) {
-                // updateAmbLocation(12,15)
-                // GetAccidentLocation(154879)
-                // console.log(accidentState);
-            }
-        }, 1000);
-    }, []);
+    // useEffect(() => {
+    //     setInterval(() => {
+    //         // updateAmbLocation(12,15)
+    //         //     GetAccidentLocation("154879")
+    //         //     console.log(accidentState);
+    //         if (userInfo.userState === 0) {
+    //             updateAmbLocation(12,15)
+    //             GetAccidentLocation("154879")
+    //             console.log(accidentState);
+    //         }
+    //     }, 1000);
+    // }, []);
 
     function toTitleCase(str){
         let res = ''
@@ -241,6 +251,7 @@ export const AuthProvider = ({children}) => {
         let body = { 
             lisencePlateNum,
         }
+
         await axios
         .post(`${BASE_URL}/ambulances/findaccident`,body)
         .then(res =>{
