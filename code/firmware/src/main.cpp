@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 #define DELAY_MS 2000
 
@@ -14,7 +15,6 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 //--------------------------------------------------------------
 // emergency phone number with country code
-// const String EMERGENCY_PHONE = "ENTER_EMERGENCY_PHONE_NUMBER";
 //--------------------------------------------------------------
 // GSM Module RX pin to Arduino 12
 // GSM Module TX pin to Arduino 13
@@ -38,14 +38,14 @@ SoftwareSerial SIM800(13, 12);
 const String APN = "mobitel"; // hutch3g // dialogbb // mobitel
 
 char deviceID[8] = "DEVICE1";
-String latitude = "7.254101";
-String longitude = "80.591636";
+String latitude = "80.591636";
+String longitude = "7.254101";
 String activeState = "";
 
 int xaxis = 0, yaxis = 0, zaxis = 0;
 int vibration = 15, devibrate = 100;
 int magnitude = 0;
-int sensitivity = 350;
+int sensitivity = 600;
 boolean isAccidentDetected = false;
 boolean isDataSentSuccessfully = false;
 String critical_level = "";
@@ -212,6 +212,16 @@ void loop()
           Serial.println(res);
           Serial.println(payload);
           delay(5000);
+
+            if(res == 200){
+
+              DynamicJsonDocument doc(1024);
+              deserializeJson(doc, payload);
+              String phoneNum = doc[0]["phoneNum"];
+              Serial.println(phoneNum);
+              //sendAlert(phoneNum);
+              delay(5000);
+            }
           
             if(res == 200 || res == 401){
             lcd.clear();
@@ -253,6 +263,33 @@ void loop()
     }
     }   
 }
+
+
+
+/*****************************************************************************************
+ * sendAlert() function
+ *****************************************************************************************/
+void sendAlert(String pNum)
+{
+  String sms_data;
+  sms_data = "PROTEGO...Accident Alert!!\r";
+  sms_data += "http://maps.google.com/maps?q=loc:";
+  sms_data += longitude + "," + latitude;
+  sendSMS(sms_data, pNum);
+}
+
+
+void sendSMS(String message, String phoneNum) {
+  SIM800.println("AT+CMGF=1"); // Set to text mode
+  delay(1000);
+  SIM800.println("AT+CMGS=\"" + phoneNum + "\""); // Send SMS to the specified phone number
+  delay(1000);
+  SIM800.println(message); // Send the message
+  delay(1000);
+  SIM800.println((char)26); // Send the ASCII value of ctrl+z
+  delay(1000);
+}
+
 
 /*****************************************************************************************
  * Impact() function
@@ -328,14 +365,14 @@ void init_wifi(){
   delay(1000);
   WiFi.begin(ssid, password);
   delay(1000);
-  Serial.println("Connecting to Wifi");
+  //Serial.println("Connecting to Wifi");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+//  Serial.println("");
+//  Serial.print("Connected to WiFi network with IP Address: ");
+//  Serial.println(WiFi.localIP());
 
   lcd.clear();
   lcd.setCursor(0, 0);
