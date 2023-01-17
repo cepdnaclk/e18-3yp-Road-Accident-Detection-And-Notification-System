@@ -9,7 +9,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [accidentState, setAccidentState] = useState('Not Active');
+    const [accidentState, setAccidentState] = useState('Invalid');
+    const [cardDetails, setCardDetails] = useState({})
 
     useEffect(() => {
         loadUserInfo()
@@ -20,15 +21,18 @@ export const AuthProvider = ({children}) => {
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     },[userInfo])
 
-    useEffect(() => {
-        setInterval(() => {
-            if (userInfo.userState === 0) {
-                // updateAmbLocation(12,15)
-                // GetAccidentLocation(154879)
-                // console.log(accidentState);
-            }
-        }, 1000);
-    }, []);
+    // useEffect(() => {
+    //     setInterval(() => {
+    //         // updateAmbLocation(12,15)
+    //         //     GetAccidentLocation("154879")
+    //         //     console.log(accidentState);
+    //         if (userInfo.userState === 0) {
+    //             updateAmbLocation(12,15)
+    //             GetAccidentLocation("154879")
+    //             console.log(accidentState);
+    //         }
+    //     }, 1000);
+    // }, []);
 
     function toTitleCase(str){
         let res = ''
@@ -241,17 +245,28 @@ export const AuthProvider = ({children}) => {
         let body = { 
             lisencePlateNum,
         }
+
         await axios
         .post(`${BASE_URL}/ambulances/findaccident`,body)
         .then(res =>{
             let { state } = res.data;
+            // console.log(state)
             setAccidentState(state);
+            setCardDetails({
+                name: (toTitleCase(res.data.fname) + ' ' + toTitleCase(res.data.lname)).trim(),
+                nic: res.data.nic,
+                plateNum: res.data.lisencePlateNum,
+                phoneNum: res.data.phoneNum,
+                patientCondition: res.data.patientCondition,
+                latitude: res.data.longitude,
+                longitude: res.data.latitude,
+            });
+            // console.log(cardDetails);
             // setUserInfo(userInfo);
             // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-            // console.log(state);
         })
         .catch(e =>{
-            console.log(`get accident error ${e}`);
+            // console.log(`get accident error ${e}`);
         });
     };
 
@@ -284,12 +299,53 @@ export const AuthProvider = ({children}) => {
         });
     }
 
+    const AcceptAccident = async (lisencePlateNum) =>{
+
+        let body = { 
+            lisencePlateNum,
+        }
+
+        await axios
+        .post(`${BASE_URL}/ambulances/acceptaccident`,body)
+        .then(res =>{
+            let { state } = res.data;
+            // console.log(state)
+            // setAccidentState(state);
+            // setUserInfo(userInfo);
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        })
+        .catch(e =>{
+            console.log(`Accept accident error ${e}`);
+        });
+    };
+
+    const ResponseAccident = async (lisencePlateNum) =>{
+
+        let body = { 
+            lisencePlateNum,
+        }
+
+        await axios
+        .post(`${BASE_URL}/ambulances/responseaccident`,body)
+        .then(res =>{
+            let { state } = res.data;
+            // console.log(state)
+            // setAccidentState(state);
+            // setUserInfo(userInfo);
+            // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        })
+        .catch(e =>{
+            console.log(`Response accident error ${e}`);
+        });
+    };
+
     return (
         <AuthContext.Provider 
             value={{
                 isLoading,
                 userInfo,
                 accidentState,
+                cardDetails,
                 DriverRegister,
                 AmbulanceRegister,
                 EmergencyRegister,
@@ -300,6 +356,8 @@ export const AuthProvider = ({children}) => {
                 AddEmergencyContact,
                 GetAccidentLocation,
                 updateAmbLocation,
+                AcceptAccident,
+                ResponseAccident,
         }}>
             {children}
         </AuthContext.Provider>
