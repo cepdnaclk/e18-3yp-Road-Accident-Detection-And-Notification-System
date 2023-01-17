@@ -32,7 +32,7 @@ const addAccident =asyncHandler(async(req,res) =>{
                 $geoNear:{
                     near:{type:"Point",coordinates:[parseFloat(longitude),parseFloat(latitude)]},
                     key:"location",
-                    maxDistance:parseFloat(1000)*1609,
+                    maxDistance:parseFloat(1000)*2,
                     distanceField:"dist.calculated",
                     spherical:true
                 }
