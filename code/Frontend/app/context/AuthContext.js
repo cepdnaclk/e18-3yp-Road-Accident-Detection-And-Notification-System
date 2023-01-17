@@ -258,8 +258,8 @@ export const AuthProvider = ({children}) => {
                 plateNum: res.data.lisencePlateNum,
                 phoneNum: res.data.phoneNum,
                 patientCondition: res.data.patientCondition,
-                latitude: res.data.latitude,
-                longitude: res.data.longitude,
+                latitude: res.data.longitude,
+                longitude: res.data.latitude,
             });
             // console.log(cardDetails);
             // setUserInfo(userInfo);
