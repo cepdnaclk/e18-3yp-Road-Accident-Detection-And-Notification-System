@@ -1,17 +1,18 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, StatusBar } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthContext';
 
 function AccountSettingScreen(props) {
-    const { isLoading, userInfo, Logout } = useContext(AuthContext);
+    const { isLoading, userInfo, Logout, toTitleCase } = useContext(AuthContext);
 
     const [fontsLoaded] = useFonts({
         'Poppins': require('../assets/fonts/Poppins-Medium.ttf'),
+        'YanoneKaff': require('../assets/fonts/YanoneKaffeesatz-SemiBold.ttf'),
     });
 
     if (!fontsLoaded) {
@@ -41,7 +42,23 @@ function AccountSettingScreen(props) {
                     start={{x: 0, y: 0.5}}
                     end={{x: 0.5, y: 0}}>
 
-                    <Image style={{width: '100%', resizeMode: 'cover'}} source={require('../assets/img/account_background.png')} />
+                    <Image style={{position: 'absolute', width: '100%', resizeMode: 'cover'}} source={require('../assets/img/account_background.png')} />   
+                    <Text style={{position: 'absolute', top: StatusBar.currentHeight + 12, left: 25, color: '#D8D5DF', fontFamily: 'YanoneKaff', fontSize: 24, letterSpacing: 0.8}}>Account</Text>
+                    <TouchableOpacity 
+                        onPress={() => {/*console.log('here');*/}}
+                        style={styles.back}>
+
+                        <Ionicons name="md-chevron-back" size={30} color="#B5B5B5" />
+                    </TouchableOpacity>
+                    <View style={styles.profilePic}>
+                        <Image style={{width: '94%', height: '94%', borderRadius: 50}} source={require('../assets/profPic/picture2.jpg')}/>
+                        <View style={styles.camera}>
+                            <Image style={{width: '55%', height: '40%', borderRadius: 50}} source={require('../assets/icons/camera_icon.png')}/>
+                        </View>
+                    </View>
+                    <Text style={{fontFamily: 'YanoneKaff', fontSize: 20, color: '#B5B5B5'}}>{(toTitleCase(userInfo.fname) + ' ' + toTitleCase(userInfo.lname)).trim()}</Text>
+                    <Text style={{fontFamily: 'YanoneKaff', fontSize: 15, color: '#B5B5B5', marginTop: 3}}>{userInfo.email}</Text>
+                    <Text style={{fontFamily: 'YanoneKaff', fontSize: 15, color: '#B5B5B5', marginTop: 3}}>{userInfo.telNum}</Text>
                 </LinearGradient>
                 <LinearGradient
                     style={styles.middle}
@@ -134,6 +151,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderBottomLeftRadius: 50,
         borderBottomRightRadius: 50,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     middle: {
         width: '92%',
@@ -174,6 +194,33 @@ const styles = StyleSheet.create({
         marginRight: 20, 
         width: 16, 
         height: 16
+    },
+    profilePic: {
+        height: 85,
+        width: 85,
+        // backgroundColor: 'rgba(90, 93, 125, 0.9)',
+        backgroundColor: '#0798E0',
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 12,
+        marginTop: 30
+    },
+    camera: {
+        position: 'absolute',
+        width: 26,
+        height: 26,
+        backgroundColor: '#1C1B33',
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 0,
+        right: 0,
+    },
+    back: {
+        position: 'absolute',
+        top: StatusBar.currentHeight + 10,
+        right: 20,
     }
 })
 
