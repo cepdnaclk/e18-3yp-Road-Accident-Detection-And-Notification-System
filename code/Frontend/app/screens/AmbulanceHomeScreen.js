@@ -443,10 +443,14 @@ function AmbulanceHome({navigation}) {
       const id = setInterval(() => {
         const plateNum = userInfo.lisencePlateNum
         // console.log(coordinates[0])
-        updateAmbLocation(coordinates[0].latitude, coordinates[0].longitude)
+        // updateAmbLocation(coordinates[0].latitude, coordinates[0].longitude)
         GetAccidentLocation(plateNum)
         // console.log('repeated')
       }, 3000);
+    }, [])
+
+    useEffect(() => {
+        updateAmbLocation(coordinates[0].latitude, coordinates[0].longitude)
     }, [])
 
     useEffect(() => {
@@ -485,7 +489,7 @@ function AmbulanceHome({navigation}) {
                         <View style={styles.profilePic}>
                           <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={require('../assets/profPic/picture3.jpg')}/>
                         </View>
-                        <View style={{backgroundColor: cardDetails.patientCondition === 'Active-critical' ? '#FF6161' : '#FFFFFF', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
+                        <View style={{backgroundColor: cardDetails.patientCondition === 'Active-critical' ? '#FF6161' : cardDetails.patientCondition === 'Active-Mild critical' ? 'blue' : '#FFF', borderRadius:10, height: 8, width: 66, marginTop: 5}}/>  
                       </View>
                       <View style={{flex: 1, height: '100%', flexDirection: 'column', justifyContent: 'space-evenly'}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
@@ -552,11 +556,11 @@ function AmbulanceHome({navigation}) {
                 latitudeDelta: 0.09,
                 longitudeDelta: 0.04,
               }}
-              maxZoomLevel={16}
+              maxZoomLevel={18}
               >
               {coordinates.map((coordinate, index) => (
                 <Marker
-                  key={coordinate.latitude}
+                  key={index}
                   pinColor={index === 0 ? 'blue' : 'red'}
                   coordinate={coordinate}
                 />
