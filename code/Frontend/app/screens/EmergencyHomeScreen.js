@@ -229,7 +229,7 @@ function EmergencyHome({navigation}) {
                 
             </MapView>
             <View style={styles.bottom}>
-              <SwipeButton
+              {/* <SwipeButton
                 Icon={
                   <MaterialIcons name="keyboard-arrow-right" size={50} color="white" />
                 }
@@ -246,7 +246,7 @@ function EmergencyHome({navigation}) {
                 borderRadius={180}
                 underlayTitle="Release to complete"
                 underlayTitleStyle={{ color: 'white', fontFamily: 'YanoneKaff', fontSize: 18 }}
-              />
+              /> */}
             </View>
             <ExpoStatusBar style='light'/>
         </View>
